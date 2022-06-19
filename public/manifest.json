@@ -1,0 +1,10 @@
+{
+  "short_name": "paçocaplate 😋",
+  "name": "Paçoca Template 😎",
+  "lang": "pt-br",
+  "start_url": "/",
+  "dir": "ltr",
+  "display": "standalone",
+  "orientation": "portrait",
+  "prefer_related_applications": false
+}

@@ -1,0 +1,14 @@
+{
+  "tabWidth": 2,
+  "useTabs": false,
+  "singleQuote": true,
+  "semi": false,
+  "trailingComma": "all",
+  "arrowParens": "avoid",
+  "prettier/prettier": [
+    "error",
+    {
+      "usePrettierrc": false
+    }
+  ]
+}
