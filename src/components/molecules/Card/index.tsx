@@ -1,4 +1,3 @@
-import { Button } from 'antd'
 import React, { FC, ReactElement } from 'react'
 
 interface IProps {
@@ -6,10 +5,7 @@ interface IProps {
 }
 const Card: FC<IProps> = ({ children }) => {
 
-
-
-    
-  return <Button>{children}</Button>
+  return <>{children}</>
 }
 
 export { Card }

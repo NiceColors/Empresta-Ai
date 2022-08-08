@@ -1,14 +1,19 @@
+import { Box, Flex } from '@chakra-ui/react'
 import React, { ReactElement } from 'react'
+import Sidebar from '../components/organisms/Sidebar'
 
 const LayoutLC = (children: ReactElement) => {
 
   return (
-    <>
-      <div>
-        {/* Componentes */}
+    <Flex minH="100vh" >
+
+      <Sidebar />
+
+      <Box bgColor="#EBF1F3" w="100%" px={8} py={12}>
+        <Box>Salve</Box>
         {children}
-      </div>
-    </>
+      </Box>
+    </Flex >
   )
 }
 

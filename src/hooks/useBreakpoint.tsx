@@ -1,9 +1,3 @@
-import { Grid } from 'antd'
-const { useBreakpoint } = Grid
+const button = 1
 
-const BreakPoint = () => {
-  const screens = useBreakpoint()
-  return screens
-}
-
-export { BreakPoint }
+export { button }
