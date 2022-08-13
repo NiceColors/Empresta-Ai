@@ -15,18 +15,18 @@ const Home: NextPage = () => {
 export default Home
 
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-
-    const isAuth = false
-
-    if (!isAuth) return {
-        redirect: {
-            destination: '/login',
-            permanent: false
-        }
-    }
-
-    return {
-        props: {}
-    }
-}
+// export const getServerSideProps: GetServerSideProps = async (ctx) => {
+// 
+//     const isAuth = false
+// 
+//     if (!isAuth) return {
+//         redirect: {
+//             destination: '/login',
+//             permanent: false
+//         }
+//     }
+// 
+//     return {
+//         props: {}
+//     }
+// }

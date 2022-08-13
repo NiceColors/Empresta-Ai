@@ -1,8 +1,12 @@
-import { Box, Flex, Heading, Text } from '@chakra-ui/react'
+import { Avatar, Box, Flex, Heading, Icon, Text, useBreakpointValue, useDisclosure } from '@chakra-ui/react'
+import { BookmarkFilledIcon, BookmarkIcon, ChevronLeftIcon, ChevronRightIcon, DashboardIcon, FileTextIcon, KeyboardIcon, PersonIcon } from '@radix-ui/react-icons'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { ReactElement } from 'react'
-import { AiFillHome } from 'react-icons/ai'
+import React, { ReactElement, useEffect, useState } from 'react'
+import { RiDashboardLine } from 'react-icons/ri'
+import NavHeader from './NavHeader'
+import NavItem from './NavItem'
+
 interface IMenuItems {
     name: string;
     link: string;
@@ -11,69 +15,106 @@ interface IMenuItems {
 
 
 export default function Sidebar() {
+    const { pathname } = useRouter()
+    const [isOpen, setIsOpen] = useState(false)
+    const isMobile = useBreakpointValue({
+        xs: true,
+        md: false,
+    })
+
+    useEffect(() => {
+        if (isMobile) setIsOpen(true)
+    }, [isMobile])
+
+    const handleIsOpen = () => {
+
+        !isMobile && setIsOpen((prev) => !prev)
+    }
+
+
+
+    const isActive = (url: string) => {
+        return pathname === url ? '#fff' : '#5f5c5c'
+    }
+
 
     const menuItems: IMenuItems[] = [
         {
             name: 'Dashboard',
             link: '/dashboard',
-            icon: <AiFillHome />
+            icon: <Icon as={DashboardIcon} color={isActive('/dashboard')} fontSize={'xl'} />
         },
         {
             name: 'Emprestimos',
-            link: '/emprestimos'
+            link: '/emprestimos',
+            icon: <Icon as={FileTextIcon} color={isActive('/emprestimos')} fontSize={'xl'} />
         },
         {
             name: 'Livros',
-            link: '/livros'
+            link: '/livros',
+            icon: <Icon as={BookmarkIcon} color={isActive('/livros')} fontSize={'xl'} />
         },
         {
             name: 'Clientes',
-            link: '/clientes'
+            link: '/clientes',
+            icon: <Icon as={PersonIcon} color={isActive('/clientes')} fontSize={'xl'} />
         },
         {
             name: 'Usuários',
-            link: '/usuarios'
+            link: '/usuarios',
+            icon: <Icon as={KeyboardIcon} color={isActive('/usuarios')} fontSize={'xl'} />
         }
     ]
 
-    const { pathname } = useRouter()
 
 
     return (
-        <Flex flexDirection="column" position="relative" py={4} justifyContent={'space-between'} minH={'100vh'} w={'100%'} maxW={{ base: '100px', sm: '280px' }} bgColor='#fff'>
 
-            <Box position="absolute" w="21px" h="21px" borderRadius={'100%'} right={-3} top={20} bgColor="#77dd77">
-
+        <Flex
+            flexDirection="column"
+            py={4}
+            justifyContent={'space-between'}
+            h="100vh"
+            pos="sticky"
+            top={0}
+            w="auto"
+            bg={'#161618'}
+            backdropFilter={'blur(160px)'}
+            boxShadow="0 4px 12px 0 rgba(0, 0, 0, 0.05)"
+            zIndex={2}
+        >
+            <Box
+                position="absolute" w="21px" h="21px"
+                borderRadius={'100%'} right={-2} top={'50px'}
+                bgColor="#232323"
+                border="1px solid #576157"
+                display={'flex'}
+                justifyContent={'center'}
+                alignItems={'center'}
+                cursor="pointer"
+                onClick={handleIsOpen}
+            >
+                {!isOpen ? <ChevronLeftIcon color="#fff" /> : <ChevronRightIcon color="#fff" />}
             </Box>
 
-            <Box>
-                <Flex px={8} py={4} gap={4} mb={16}>
-                    <Box w={12} h={10} borderRadius={'8px'} border="1px solid #297C3B"></Box>
-                    {/* <Heading color="green.500" fontSize={'xl'} fontWeight={500}>Empresta Aí</Heading> */}
+            <Flex
+                flexDirection={'column'}
+                px={3} py={4}
+                w={isOpen ? '100px' : '290px'}
+                overflow={'hidden'}
+                transition={'all 0.3s ease-in-out'}
+            >
+                <Flex px={4} mb={16} gap={4} alignItems={'center'}>
+                    <NavHeader mobile={isOpen} />
                 </Flex>
-                <Flex flexDirection={'column'} gap={8}>
-                    {menuItems.map((item) => (
-                        <Link href={`${item.link}`} key={item.link}>
-                            <Flex px={8} gap={4} position='relative' cursor={'pointer'}                        >
-                                {item.icon}
-                                <Text
-                                    color={item.link === pathname ? 'green.500' : '#828282'}
-                                    fontWeight={500}
-                                    className={item.link === pathname ? "link-active" : ''}
-                                    display={{
-                                        base: 'none',
-                                        sm: 'block'
-                                    }}
-                                >{item.name}</Text>
-                            </Flex>
-                        </Link>
 
+                <Flex flexDirection={'column'} gap={4}>
+                    <Text px={3} color={"#ffffff53"}>Geral</Text>
+                    {menuItems.map((item, index) => (
+                        <NavItem key={index} mobile={isOpen} data={item} pathname={pathname} />
                     ))}
                 </Flex>
-            </Box >
-
-            <Box w="90%" h="250px" m="0 auto" bgColor="green.200" borderRadius="8px" px={6}>
-            </Box>
+            </Flex  >
 
 
         </Flex >

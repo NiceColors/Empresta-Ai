@@ -1,8 +1,10 @@
 import { Box, Button, Flex, FormControl, FormLabel, Grid, GridItem, Heading, Image, Input, Link, Text } from '@chakra-ui/react'
 import type { GetServerSideProps, NextPage } from 'next'
+import { parseCookies } from 'nookies'
 import React, { useContext } from 'react'
 import { Resolver, useForm } from 'react-hook-form'
 import { AuthContext } from '../contexts/AuthContext'
+import { withSSRGuest } from '../utils/withSSRGuest'
 
 
 type FormValues = {
@@ -78,18 +80,11 @@ const Login: NextPage = () => {
 
 export default Login
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-
-  const isAuth = false
-
-  if (isAuth) return {
-    redirect: {
-      destination: '/',
-      permanent: false
-    }
-  }
+export const getServerSideProps = withSSRGuest(async (ctx) => {
 
   return {
-    props: {}
+    props: {
+
+    }
   }
-}
+})
