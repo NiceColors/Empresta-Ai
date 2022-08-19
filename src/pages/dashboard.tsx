@@ -1,16 +1,34 @@
 import { Badge, Box, Flex, Grid, GridItem, Heading, Text } from '@chakra-ui/react'
 import { ChevronRightIcon } from '@radix-ui/react-icons';
+import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion';
 import Link from 'next/link'
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import { useQuery } from 'react-query';
 import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
 import { AuthContext } from '../contexts/AuthContext';
+import { getBooks, useBooks } from '../hooks/useBooks';
+import { useDebounce } from '../hooks/useDebounce';
 import { setupAPIClient } from '../services/api';
+import { api } from '../services/apiClient';
 import { withSSRAuth } from '../utils/withSSRAuth';
+// eslint-disable-next-line react/prop-types
 
-export default function Dashboard() {
 
-    const { signOut } = useContext(AuthContext)
+
+
+
+
+
+export default function Dashboard({ books }: any) {
+    const { data } = useBooks({
+        initialData: books,
+    })
+
+    
+
+
+    
 
     return (
         <>
@@ -34,7 +52,7 @@ export default function Dashboard() {
                     </Flex>
                     <SimpleBar style={{ maxHeight: '79vh' }}>
                         <Grid templateColumns="1fr 1fr 1fr" gap={12} mt={8} py={0} paddingRight={6}>
-                            {Array.from(Array(12), (_, x) => x).map((item, index) =>
+                            {data?.map((item, index) =>
                                 <GridItem position="relative" key={index}>
                                     <Box
                                         w={'20px'}
@@ -57,7 +75,7 @@ export default function Dashboard() {
                                     <Box
                                         borderRadius={12} w="100%" h={"40vh"}
                                         bgColor="green.200"
-                                        bgImage={'url(https://images-na.ssl-images-amazon.com/images/I/418Dq8vTZ1L.jpg)'}
+                                        bgImage={`url(${item.bannerUrl})`}
                                         bgSize="cover"
                                         position={'relative'}
                                     >
@@ -68,8 +86,8 @@ export default function Dashboard() {
                                             bottom={0}
                                         >Disponível</Badge>
                                     </Box>
-                                    <Heading fontWeight={500} color="whiteAlpha.900" fontSize="lg" mt={2}>{"OLHOS D'ÁGUA"} - 2015</Heading>
-                                    <Text fontWeight={300} color="whiteAlpha.900">Conceição Evaristo</Text>
+                                    <Heading fontWeight={500} color="whiteAlpha.900" fontSize="lg" mt={2}>{item.title} - 2015</Heading>
+                                    <Text fontWeight={300} color="whiteAlpha.900">{item.author.split(',')[0]}</Text>
                                 </GridItem>
 
                             )}
@@ -113,10 +131,17 @@ export default function Dashboard() {
 export const getServerSideProps = withSSRAuth(async (ctx) => {
 
 
+    // const apiClient = setupAPIClient(ctx)
+    // const response = await apiClient.get('users/me')
+
     const apiClient = setupAPIClient(ctx)
-    const response = await apiClient.get('users/me')
+    const { data } = await apiClient.get('books')
+
+
 
     return {
-        props: {}
+        props: {
+            books: data.books
+        }
     }
 })

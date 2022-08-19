@@ -75,7 +75,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
             }).catch(() => {
                 signOut()
             })
-
         }
 
     }, [])

@@ -14,8 +14,6 @@ type FailedRequestsQueueProps = {
 let isRefreshing = false
 let failedRequestQueue: any = [];
 
-
-
 export const setupAPIClient = (ctx: GetServerSidePropsContext | undefined = undefined) => {
     let cookies = parseCookies(ctx);
 
@@ -38,7 +36,10 @@ export const setupAPIClient = (ctx: GetServerSidePropsContext | undefined = unde
         (error: AxiosError<AxiosErrorResponse>) => {
 
             if (error!.response!.status === 401) {
-                if (error!.response!.data?.message === "jwt expired" || error!.response!.data?.message === "invalid signature") {
+
+                const message = error.response!.data.message;
+
+                if (message === "jwt expired" || message === "invalid signature" || message === "invalid token") {
                     // renovar o token
                     cookies = parseCookies(ctx);
 
@@ -90,6 +91,7 @@ export const setupAPIClient = (ctx: GetServerSidePropsContext | undefined = unde
 
                     return new Promise((resolve, reject) => {
 
+
                         failedRequestQueue.push({
                             onSuccess: (token: string) => {
                                 // quando o processo de refresh estiver finalizado
@@ -102,6 +104,8 @@ export const setupAPIClient = (ctx: GetServerSidePropsContext | undefined = unde
                                 reject(err);
                             },
                         });
+                        console.log("failedRequestQueue", failedRequestQueue);
+
                     });
                 } else {
                     // o erro pode não ser do tipo token expirado, portanto o usuário é deslogado

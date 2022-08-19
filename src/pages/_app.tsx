@@ -2,10 +2,14 @@ import { ChakraProvider, Spinner } from '@chakra-ui/react'
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
+import { QueryClient, QueryClientProvider } from 'react-query'
+import { ReactQueryDevtools } from 'react-query/devtools'
 import { HashLoader } from 'react-spinners'
 import { AuthProvider } from '../contexts/AuthContext'
 import Layout from '../layout'
 import { theme } from '../styles/theme'
+
+const queryClient = new QueryClient()
 
 function MyApp({ Component, pageProps }: AppProps) {
 
@@ -23,11 +27,15 @@ function MyApp({ Component, pageProps }: AppProps) {
   console.log();
 
   return (
-    <ChakraProvider theme={theme}>
-      <AuthProvider>
-        {isNotLogin ? getLayout(<Component  {...pageProps} />) : <Component  {...pageProps} />}
-      </AuthProvider>
-    </ChakraProvider>
+    <QueryClientProvider client={queryClient}>
+      <ChakraProvider theme={theme}>
+        <AuthProvider>
+          {isNotLogin ? getLayout(<Component  {...pageProps} />) : <Component  {...pageProps} />}
+        </AuthProvider>
+        <ReactQueryDevtools />
+      </ChakraProvider>
+    </QueryClientProvider>
+
   )
 }
 

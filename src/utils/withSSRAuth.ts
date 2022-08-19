@@ -46,28 +46,15 @@ export function withSSRAuth<P>(fn: GetServerSideProps<P>, options?: WithSSRAuthO
                     }
                 }
             }
-
         }
-
 
 
         try {
             return await fn(ctx)
-
         } catch (err) {
 
-            if (err instanceof AuthTokenError) {
-                destroyCookie(ctx, 'nextauth.token', { path: '/' })
-                destroyCookie(ctx, 'nextauth.refreshToken', { path: '/' })
-
-                return {
-                    redirect: {
-                        destination: '/login',
-                        permanent: false
-                    }
-                }
-
-            }
+            destroyCookie(ctx, 'nextauth.token', { path: '/' })
+            destroyCookie(ctx, 'nextauth.refreshToken', { path: '/' })
 
             return {
                 redirect: {
@@ -75,7 +62,6 @@ export function withSSRAuth<P>(fn: GetServerSideProps<P>, options?: WithSSRAuthO
                     permanent: false
                 }
             }
-
 
         }
 

@@ -12,14 +12,16 @@ const LayoutLC = (children: ReactElement) => {
         <Sidebar />
       </GridItem>
 
-      <GridItem>
+      <GridItem
+        px={8}
+        py={8}
+      >
 
         <Search />
 
         <Box
           w="100%"
-          px={8}
-          py={12}>
+        >
           {children}
         </Box>
       </GridItem>

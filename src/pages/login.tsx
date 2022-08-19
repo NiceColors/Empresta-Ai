@@ -24,8 +24,8 @@ const Login: NextPage = () => {
 
 
   return (
-    <Box minH={'100vh'}>
-      <Flex w="100%" maxW="1400px" m="0 auto" alignItems="center" py={8}>
+    <Box minH={'100vh'} bgColor={'#fff'} px={{ base: 2, sm: 8 }}>
+      <Flex w="100%" maxW="1400px" m="0 auto" ml={4} alignItems="center" py={8}>
         <Box w={12} h={12} borderRadius={'100%'} bgColor={'green.500'} mr={4} /> <Heading color="green.900">Empresta Aí</Heading>
       </Flex>
 
