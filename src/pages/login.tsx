@@ -1,8 +1,8 @@
-import { Box, Button, Flex, FormControl, FormLabel, Grid, GridItem, Heading, Image, Input, Link, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, FormControl, FormLabel, Grid, GridItem, Heading, Image, Input, Link, Text, useToast } from '@chakra-ui/react'
 import type { GetServerSideProps, NextPage } from 'next'
 import { parseCookies } from 'nookies'
-import React, { useContext } from 'react'
-import { Resolver, useForm } from 'react-hook-form'
+import React, { useContext, useState } from 'react'
+import { appendErrors, Resolver, useForm } from 'react-hook-form'
 import { AuthContext } from '../contexts/AuthContext'
 import { withSSRGuest } from '../utils/withSSRGuest'
 
@@ -13,14 +13,31 @@ type FormValues = {
 }
 
 const Login: NextPage = () => {
+  const toast = useToast()
 
 
-  const { handleSubmit, register, formState: { errors } } = useForm<FormValues>()
+  const { handleSubmit, register, formState: { errors }, setError } = useForm<FormValues>()
 
   const { signIn } = useContext(AuthContext)
+  const [submitLoading, setSubmitLoading] = useState(false)
 
+  const onSubmit = handleSubmit(async (data) => {
+    setSubmitLoading(true)
+    try {
+      await signIn(data)
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.message ?? 'Tente novamente mais tarde'
+      toast({
+        title: `${errorMessage}`,
+        status: 'error',
+        isClosable: true,
+        position: 'top'
+      })
+    } finally {
+      setSubmitLoading(false)
+    }
 
-  const onSubmit = handleSubmit(async (data) => await signIn(data))
+  })
 
 
   return (
@@ -64,6 +81,7 @@ const Login: NextPage = () => {
                 type="submit"
                 fontWeight={500}
                 w="120px"
+                isLoading={submitLoading}
                 color="#fff">Entrar</Button>
             </Flex>
           </Flex>

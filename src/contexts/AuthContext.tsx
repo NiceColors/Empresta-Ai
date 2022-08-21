@@ -1,6 +1,6 @@
 import Router, { useRouter } from 'next/router';
 import { setCookie, parseCookies, destroyCookie } from 'nookies'
-import React, { createContext, FC, ReactNode, useEffect, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 import { api } from '../services/apiClient';
 
 type User = {
@@ -8,7 +8,6 @@ type User = {
     permissions?: string[];
     role?: string[];
 }
-
 
 type SignInCredentials = {
     email: string;
@@ -80,41 +79,32 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }, [])
 
 
-
-
-
     async function signIn({ email, password }: SignInCredentials) {
-        try {
-            const res = await api.post('sessions', {
-                email,
-                password
-            })
 
-            const { token, refreshToken } = res.data
-            const { permissions, role } = res.data.user
+        const res = await api.post('sessions', {
+            email,
+            password
+        })
 
-            setCookie(undefined, 'nextauth.token', token)
-            setCookie(undefined, 'nextauth.refreshToken', refreshToken)
+        const { token, refreshToken } = res.data
+        const { permissions, role } = res.data.user
 
-            setUser({
-                email,
-                permissions,
-                role
-            })
+        setCookie(undefined, 'nextauth.token', token)
+        setCookie(undefined, 'nextauth.refreshToken', refreshToken)
 
-            //tipar api
-            api.interceptors.request.use(function (config) {
-                config!.headers!.Authorization = `Bearer ${token}`
-                return config;
-            });
+        setUser({
+            email,
+            permissions,
+            role
+        })
 
+        //tipar api
+        api.interceptors.request.use(function (config) {
+            config!.headers!.Authorization = `Bearer ${token}`
+            return config;
+        });
 
-
-            router.push('/dashboard')
-
-        } catch (error) {
-            console.log(error);
-        }
+        router.push('/dashboard')
 
     }
 
