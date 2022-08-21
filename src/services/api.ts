@@ -37,11 +37,11 @@ export const setupAPIClient = (ctx: GetServerSidePropsContext | undefined = unde
 
             if (error!.response!.status === 401) {
 
-                const message = error.response!.data.message;
+                let message = error.response!.data.message;
 
-                if (message === "jwt expired" || message === "invalid signature" || message === "invalid token") {
+                if (message === "jwt expired" || message === "invalid signature" || message === "Invalid token") {
                     // renovar o token
-                    cookies = parseCookies(ctx);
+                    cookies = parseCookies(ctx)
 
                     const { "nextauth.refreshToken": refreshToken } = cookies;
                     const originalConfig = error.config; // toda a configuração da requisição feita para o backend, como qual rotas eu chamei, quais parâmetros foram passados, o que deveria acontecer depois da requisição ser feita, etc.
@@ -54,21 +54,11 @@ export const setupAPIClient = (ctx: GetServerSidePropsContext | undefined = unde
                         })
                             .then((response) => {
                                 const { token } = response.data;
-
+                                console.log('token do refresh token:', token)
                                 setCookie(ctx, "nextauth.token", token, {
                                     maxAge: 60 * 60 * 24 * 30, // (30 days) quanto tempo o cookie deve ser mantido no navegador
                                     path: "/", // qualquer endereço da app vai ter acesso ao cookie, geralmente usado '/' para um cookie global
                                 });
-
-                                setCookie(
-                                    ctx,
-                                    "nextauth.refreshToken",
-                                    response.data.refreshToken,
-                                    {
-                                        maxAge: 60 * 60 * 24 * 30, // (30 days) quanto tempo o cookie deve ser mantido no navegador
-                                        path: "/", // qualquer endereço da app vai ter acesso ao cookie, geralmente usado '/' para um cookie global
-                                    }
-                                );
 
                                 api.defaults.headers['Authorization'] = `Bearer ${token}`;
 
@@ -80,7 +70,7 @@ export const setupAPIClient = (ctx: GetServerSidePropsContext | undefined = unde
                                 failedRequestQueue.forEach((request: any) => request.onFailure(err));
                                 failedRequestQueue = [];
 
-                                if (typeof window !== "undefined" || process.browser) {
+                                if (typeof window !== "undefined") {
                                     signOut();
                                 }
                             })
@@ -95,7 +85,7 @@ export const setupAPIClient = (ctx: GetServerSidePropsContext | undefined = unde
                         failedRequestQueue.push({
                             onSuccess: (token: string) => {
                                 // quando o processo de refresh estiver finalizado
-                                originalConfig!.headers!.Authorization = `Bearer ${token}`;
+                                originalConfig!.headers["Authorization"]= `Bearer ${token}`;
 
                                 resolve(api(originalConfig));
                             },
@@ -104,7 +94,6 @@ export const setupAPIClient = (ctx: GetServerSidePropsContext | undefined = unde
                                 reject(err);
                             },
                         });
-                        console.log("failedRequestQueue", failedRequestQueue);
 
                     });
                 } else {

@@ -7,7 +7,6 @@ import { useQuery } from 'react-query';
 import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
 import { AuthContext } from '../contexts/AuthContext';
-import { getBooks, useBooks } from '../hooks/useBooks';
 import { useDebounce } from '../hooks/useDebounce';
 import { setupAPIClient } from '../services/api';
 import { api } from '../services/apiClient';
@@ -20,15 +19,22 @@ import { withSSRAuth } from '../utils/withSSRAuth';
 
 
 
-export default function Dashboard({ books }: any) {
-    const { data } = useBooks({
-        initialData: books,
-    })
+export default function Dashboard() {
 
-    
+    const [data, setData] = useState([])
+
+    const { user } = useContext(AuthContext)
 
 
-    
+    useEffect(() => {
+        (async () => {
+            const response = await api.get(`http://localhost:3333/books`);
+            setData(response.data)
+        })();
+    }, [])
+
+    console.log(data);
+
 
     return (
         <>
@@ -52,7 +58,7 @@ export default function Dashboard({ books }: any) {
                     </Flex>
                     <SimpleBar style={{ maxHeight: '79vh' }}>
                         <Grid templateColumns="1fr 1fr 1fr" gap={12} mt={8} py={0} paddingRight={6}>
-                            {data?.map((item, index) =>
+                            {data?.map((item: any, index: any) =>
                                 <GridItem position="relative" key={index}>
                                     <Box
                                         w={'20px'}
@@ -131,17 +137,11 @@ export default function Dashboard({ books }: any) {
 export const getServerSideProps = withSSRAuth(async (ctx) => {
 
 
-    // const apiClient = setupAPIClient(ctx)
-    // const response = await apiClient.get('users/me')
-
-    const apiClient = setupAPIClient(ctx)
-    const { data } = await apiClient.get('books')
-
-
 
     return {
         props: {
-            books: data.books
+
         }
     }
+
 })
