@@ -41,7 +41,7 @@ export function withSSRAuth<P>(fn: GetServerSideProps<P>, options?: WithSSRAuthO
             if (!userHasValidPermissions) {
                 return {
                     redirect: {
-                        destination: '/dashboard',
+                        destination: '/',
                         permanent: false
                     }
                 }
@@ -53,17 +53,13 @@ export function withSSRAuth<P>(fn: GetServerSideProps<P>, options?: WithSSRAuthO
             return await fn(ctx)
         } catch (err) {
 
-            console.log(err instanceof AuthTokenError)
+            destroyCookie(ctx, 'nextauth.token')
+            destroyCookie(ctx, 'nextauth.refreshToken')
 
-            if (err instanceof AuthTokenError) {
-                destroyCookie(ctx, 'nextauth.token')
-                destroyCookie(ctx, 'nextauth.refreshToken')
-
-                return {
-                    redirect: {
-                        destination: '/',
-                        permanent: false,
-                    }
+            return {
+                redirect: {
+                    destination: '/',
+                    permanent: false,
                 }
             }
         }

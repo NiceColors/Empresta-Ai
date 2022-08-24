@@ -67,6 +67,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     useEffect(() => {
         const { 'nextauth.token': token, } = parseCookies();
 
+
         if (token) {
             api.get('/users/me').then(res => {
                 const { email, permissions, role } = res.data
@@ -77,7 +78,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
 
     }, [])
-
 
     async function signIn({ email, password }: SignInCredentials) {
 
@@ -104,10 +104,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
             return config;
         });
 
-        router.push('/dashboard')
+        router.push('/')
 
     }
-
 
     return <AuthContext.Provider value={{ signOut, signIn, isAuthenticated, user }}>{children} </AuthContext.Provider>
 };

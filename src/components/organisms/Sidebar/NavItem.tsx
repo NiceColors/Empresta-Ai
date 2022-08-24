@@ -28,6 +28,7 @@ export default function NavItem({ data, pathname, mobile }: NavItemProps) {
           px={4}
           py={3}
           borderRadius={'12px'}
+          width={mobile ? '54px' : 'auto'}
         >
           {icon}
           <Text
