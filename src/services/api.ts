@@ -16,9 +16,9 @@ let failedRequestQueue: any = [];
 
 export const setupAPIClient = (ctx: GetServerSidePropsContext | undefined = undefined) => {
     let cookies = parseCookies(ctx);
-
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL
     const api = axios.create({
-        baseURL: "http://localhost:3333",
+        baseURL: apiUrl,
         headers: {
             Authorization: `Bearer ${cookies["nextauth.token"]}`,
         },
@@ -85,7 +85,7 @@ export const setupAPIClient = (ctx: GetServerSidePropsContext | undefined = unde
                         failedRequestQueue.push({
                             onSuccess: (token: string) => {
                                 // quando o processo de refresh estiver finalizado
-                                originalConfig!.headers["Authorization"]= `Bearer ${token}`;
+                                originalConfig!.headers["Authorization"] = `Bearer ${token}`;
 
                                 resolve(api(originalConfig));
                             },

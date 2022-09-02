@@ -9,7 +9,7 @@ interface NavHeaderProps {
 export default function NavHeader({ mobile }: NavHeaderProps) {
     return (
         <>
-            <Avatar size='md' name='Dan Abrahmov' src='https://avatars.githubusercontent.com/u/35050003?v=4' />
+            <Avatar size='md' name='avatar' src='https://avatars.githubusercontent.com/u/35050003?v=4' />
             {!mobile &&
                 <Box>
                     <Text fontSize={'12px'} color="#ffffff53">ADMINISTRADOR</Text>

@@ -85,7 +85,7 @@ export default function Dashboard() {
 
     useEffect(() => {
         (async () => {
-            const response = await api.get(`http://localhost:3333/books?limit=10`);
+            const response = await api.get(`/books?limit=10`);
             setData(response.data.books)
             console.log(response.data);
         })();
@@ -210,7 +210,7 @@ export default function Dashboard() {
                                     <Avatar />
                                     <Box>
                                         <Text fontWeight={400} color="whiteAlpha.900">Luis Felipe Amorim {index + 1}°</Text>
-                                        <Text>Fez um empréstimo de um novo livro</Text>
+                                        <Text>Fez um empréstimo</Text>
                                     </Box>
                                 </Flex>
                                 <Text fontSize={'0.875rem'} fontWeight={500} color="gray.400"> Há 2 dias</Text>

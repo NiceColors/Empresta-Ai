@@ -24,7 +24,6 @@ export default function Search() {
     const debouncedSearch = useDebounce(search, 500);
     const [data, setData] = useState([]);
 
-
     useOutsideClick({
         ref: ref,
         handler: () => setIsOpen(false),
@@ -32,7 +31,7 @@ export default function Search() {
 
     async function searchBooks(page: number = 0, search: string | number | boolean, limit?: number): Promise<any> {
 
-        const { data } = await api.get(`http://localhost:3333/books?query=${search}&limit=5`);
+        const { data } = await api.get(`/books?query=${search}&limit=5`);
 
         setData(data.books);
 

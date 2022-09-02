@@ -6,7 +6,7 @@ import Sidebar from '../components/organisms/Sidebar'
 const LayoutLC = (children: ReactElement) => {
 
   return (
-    <Grid w="100%" templateColumns={'auto 1fr'}>
+    <Grid w="100%" templateColumns={'auto 1fr'} overflowX={'hidden'}>
 
       <GridItem>
         <Sidebar />

@@ -11,8 +11,6 @@ import {
 import Link from "next/link";
 import React from 'react'
 import MotionBox from "../components/atoms/Motion/Motion";
-import { withSSRAuth } from "../utils/withSSRAuth";
-
 
 const Page404 = () => {
     const { colorMode } = useColorMode();
