@@ -1,8 +1,9 @@
-import { Avatar, Badge, Box, Flex, Grid, GridItem, Heading, Show, SimpleGrid, Spinner, Text, theme } from '@chakra-ui/react'
+import { Avatar, Badge, Box, Flex, Grid, GridItem, Heading, Show, SimpleGrid, Skeleton, Spinner, Text, theme } from '@chakra-ui/react'
 import { ChevronRightIcon } from '@radix-ui/react-icons';
 import { ApexOptions } from 'apexcharts';
 import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import Link from 'next/link'
 import React, { useContext, useEffect, useState } from 'react'
 import { Suspense } from 'react';
@@ -16,43 +17,55 @@ import { withSSRAuth } from '../utils/withSSRAuth';
 
 
 export default function Dashboard() {
-
-    const [data, setData] = useState([])
+    const skeletonArray = [... new Array(12)].map((item, index) => ({ title: 'Lorem Ipsum', author: 'Paçoca', pages: 0, isbn: index }))
+    const [data, setData] = useState(skeletonArray)
+    const isLoading = !(data[0].isbn)
 
     const { user } = useContext(AuthContext)
 
     useEffect(() => {
-        (async () => {
-            const response = await api.get(`/books?limit=50`);
-            setData(response.data.books)
-            console.log(response.data);
-        })();
+
+        try {
+            (async () => {
+                const response = await api.get(`/books?limit=50`);
+
+                setData(response.data.books)
+
+            })();
+        } catch (error) {
+            console.log(error);
+        }
     }, [])
 
     const uniqueISBNs = [... new Set(data.map((book: any) => book.isbn))]
-    const listOfBooks = uniqueISBNs.map(item => data.find((book: any) => book.isbn === item))
+    const listOfBooks = !isLoading ? uniqueISBNs.map(item => data.find((book: any) => book.isbn === item)) : skeletonArray
     const booksCount = (isbn: string) => data.filter((book: any) => book.isbn === isbn).length
 
     return (
         <>
 
-            <SimpleGrid flex='1' gap='4' minChildWidth={420} overflowX={'hidden'}>
-                <Charts />
+            <SimpleGrid flex='1' gap='4' minChildWidth={{
+                base: '120px',
+                sm: 200,
+                lg: 420
+            }} overflowX={'hidden'}>
+                <Charts loading={isLoading} />
             </SimpleGrid>
 
             <Grid templateColumns={{ base: 'repeat(1fr)', lg: '1.5fr 1fr' }} gap={24}>
 
                 <GridItem>
                     <Flex gap={4}>
-
                     </Flex>
                     <Flex alignItems={'center'} justifyContent={'space-between'} mt={24} mb={6}>
-                        <Heading fontWeight={400} color="whiteAlpha.900">
+                        <Heading fontWeight={400} color="whiteAlpha.900" fontSize={'clamp(1rem, 2.5vw, 2.5rem)'}>
                             Mais populares
                         </Heading>
                         <Link href="/dashboard">
                             <Flex alignItems={'center'}>
-                                <Text fontWeight={400} color="whiteAlpha.900" cursor="pointer">Ver todos</Text>
+                                <Text fontWeight={400} color="whiteAlpha.900" display={{ base: 'none', lg: 'block' }} cursor="pointer">
+                                    Ver todos
+                                </Text>
                                 <ChevronRightIcon color={'#fff'} />
                             </Flex>
                         </Link>
@@ -62,45 +75,61 @@ export default function Dashboard() {
                         gap={12} mt={8}
                         py={4}
                         paddingRight={6}
-                        templateColumns={'repeat(auto-fit, minmax(140px, 1fr))'}
+                        templateColumns={{
+                            base: 'repeat(1, 1fr)',
+                            sm: 'repeat(2, 1fr)',
+                            md: 'repeat(3, 1fr)',
+                            lg: 'repeat(3, 1fr)',
+                            xl: 'repeat(4, 1fr)',
+                        }}
                     >
                         {listOfBooks?.map((item: any, index: any) =>
-                            <GridItem position="relative" key={index}>
-                                <Box
-                                    w={'20px'}
-                                    h={'20px'}
-                                    bgColor="red.500"
-                                    borderRadius={'100%'}
-                                    position="absolute"
-                                    display={'flex'}
-                                    justifyContent="center"
-                                    alignItems="center"
-                                    color="#fff"
-                                    fontSize={'0.8rem'}
-                                    right={-2}
-                                    top={-2}
-                                    zIndex={9999}
-                                >
-                                    {item.status ? booksCount(item.isbn) : 0}
-                                </Box>
-                                <Box
-                                    borderRadius={12} w="100%" h={"30vh"}
-                                    bgColor="gray.50"
-                                    bgImage={`url(${item.bannerUrl})`}
-                                    bgSize="contain"
-                                    bgRepeat="no-repeat"
-                                    bgPosition="center"
-                                    position={'relative'}
-                                >
-                                    <Badge
-                                        colorScheme={item.status ? "green" : "red"}
-                                        variant="solid"
+                            <GridItem position="relative" key={index} mb={12}
+                            >
+
+                                <Skeleton w={'100%'} h={'30vh'} borderRadius={'9px'} isLoaded={!isLoading}>
+
+                                    <Box
+                                        w={'20px'}
+                                        h={'20px'}
+                                        bgColor="red.500"
+                                        borderRadius={'100%'}
                                         position="absolute"
-                                        bottom={0}
-                                    >{item.status ? "Disponível" : "Indisponível"}</Badge>
-                                </Box>
-                                <Heading fontWeight={500} color="whiteAlpha.900" fontSize="sm" mt={2}>{item.title}</Heading>
-                                <Text fontWeight={300} color="whiteAlpha.900">{item.author.split(',')[0]}</Text>
+                                        display={'flex'}
+                                        justifyContent="center"
+                                        alignItems="center"
+                                        color="#fff"
+                                        fontSize={'0.8rem'}
+                                        right={-2}
+                                        top={-2}
+                                        zIndex={9999}
+
+                                    >
+                                        {item.status ? booksCount(item.isbn) : 0}
+                                    </Box>
+                                    <Box
+                                        w={'100%'}
+                                        h={'30vh'}
+                                        borderRadius={12}
+                                        bgColor="gray.50"
+                                        bgImage={`url(${item.bannerUrl})`}
+                                        bgSize="contain"
+                                        bgRepeat="no-repeat"
+                                        bgPosition="center"
+                                        position={'relative'}
+                                    >
+                                        <Badge
+                                            colorScheme={item.status ? "green" : "red"}
+                                            variant="solid"
+                                            position="absolute"
+                                            bottom={0}
+                                            left={0}
+                                        >{item.status ? "Disponível" : "Indisponível"}</Badge>
+                                    </Box>
+                                    <Heading fontWeight={500} color="whiteAlpha.900" fontSize="sm" mt={2}>{item.title}</Heading>
+                                    <Text fontWeight={300} color="whiteAlpha.900">{item.author.split(',')[0]}</Text>
+                                </Skeleton>
+
                             </GridItem>
 
                         )}
@@ -133,7 +162,7 @@ export default function Dashboard() {
                     </Flex>
                 </GridItem>
 
-            </Grid>
+            </Grid >
 
         </>
     )

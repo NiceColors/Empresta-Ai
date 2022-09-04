@@ -1,5 +1,5 @@
 
-import { Box, Text, theme } from '@chakra-ui/react'
+import { Box, Skeleton, Text, theme } from '@chakra-ui/react'
 import { ApexOptions } from 'apexcharts';
 import dynamic from 'next/dynamic';
 import React from 'react'
@@ -8,7 +8,15 @@ const Chart = dynamic(() => import('react-apexcharts'), {
 });
 
 
-export const Charts = () => {
+interface ChartProps {
+    options?: ApexOptions
+    series?: any
+    type?: string
+    height?: number
+    loading?: boolean
+}
+
+export const Charts = ({ loading = false, ...props }: ChartProps) => {
 
     const options: ApexOptions = {
         chart: {
@@ -80,12 +88,14 @@ export const Charts = () => {
             >
                 <Text fontSize='lg' mb='4' color={'gray.50'}>Empréstimos da semana</Text>
 
-                <Chart
-                    options={options}
-                    series={series}
-                    type='area'
-                    height={220}
-                />
+                <Skeleton w={'100%'} isLoaded={!loading}>
+                    <Chart
+                        options={options}
+                        series={series}
+                        type='area'
+                        height={220}
+                    />
+                </Skeleton>
             </Box>
             <Box
                 p={['6', '8']}
@@ -95,12 +105,14 @@ export const Charts = () => {
             >
                 <Text fontSize='lg' mb='4' color={'gray.50'}>Devoluções</Text>
 
-                <Chart
-                    options={options}
-                    series={series}
-                    type='scatter'
-                    height={220}
-                />
+                <Skeleton w={'100%'} isLoaded={!loading}>
+                    <Chart
+                        options={options}
+                        series={series}
+                        type='scatter'
+                        height={220}
+                    />
+                </Skeleton>
             </Box>
         </>
     )
