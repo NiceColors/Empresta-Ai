@@ -1,10 +1,20 @@
 import React from 'react'
+import { withSSRGuest } from '../utils/withSSRGuest'
 
 const Home = () => {
     return (
-        <div>index</div>
+        <div></div>
     )
 }
 
 
 export default Home
+
+export const getServerSideProps = withSSRGuest(async (ctx) => {
+
+    return {
+        props: {
+
+        }
+    }
+})

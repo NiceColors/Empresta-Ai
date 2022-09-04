@@ -18,7 +18,7 @@ function MyApp({ Component, pageProps, router }: AppProps) {
   }, [appToken])
 
 
-  const isLoginPage = router.asPath === '/login'
+  const isLoginPage = router.asPath === '/login' || router.asPath === '/'
   const isAuth = (token || !isLoginPage) ? getLayout(<Component  {...pageProps} />) : <Component  {...pageProps} />
 
   return (
