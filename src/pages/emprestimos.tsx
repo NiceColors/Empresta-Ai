@@ -1,20 +1,21 @@
 import React from 'react'
+import { Can } from '../components/Can'
 import { withSSRAuth } from '../utils/withSSRAuth'
 
 export default function emprestimos() {
   return (
-    <div>emprestimos</div>
+    <Can permissions={[]} role={['ADMIN']}>
+      <div>emprestimos</div>
+    </Can>
   )
 }
 
 export const getServerSideProps = withSSRAuth(async (ctx) => {
 
-
-
   return {
-      props: {
+    props: {
 
-      }
+    }
   }
 
 })

@@ -42,7 +42,26 @@ export function signOut(broadcast?: boolean) {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
+    let router = useRouter()
 
+    const [user, setUser] = useState<User>({} as User);
+    const isAuthenticated = !!user.email;
+
+    useEffect(() => {
+        const { 'nextauth.token': token, } = parseCookies();
+
+        if (token) {
+            api.get('/users/me').then(res => {
+                const { email, permissions, role } = res.data
+                console.log(res.data)
+                setUser({ email, permissions, role })
+            }).catch(() => {
+                signOut()
+            })
+        }
+
+
+    }, [])
 
     useEffect(() => {
 
@@ -59,25 +78,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
     }, [])
 
-    let router = useRouter()
 
-    const [user, setUser] = useState<User>({} as User);
-    const isAuthenticated = !!user.email;
-
-    useEffect(() => {
-        const { 'nextauth.token': token, } = parseCookies();
-
-
-        if (token) {
-            api.get('/users/me').then(res => {
-                const { email, permissions, role } = res.data
-                setUser({ email, permissions, role })
-            }).catch(() => {
-                signOut()
-            })
-        }
-
-    }, [])
 
     async function signIn({ email, password }: SignInCredentials) {
 

@@ -114,9 +114,11 @@ export default function Search() {
                         </Box>
                     ) : (
                         <Stack gap={2}>
+
                             <Text color={'red.400'} fontWeight={500}>
                                 Nenhum livro encontrado...
                             </Text>
+
                         </Stack>
                     )}
                 </Flex>

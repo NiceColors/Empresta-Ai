@@ -23,7 +23,6 @@ export function ValidateUserPermissions({
 
     }
 
-
     if (role && role?.length > 0) {
 
         const hasAllrole = role?.some(permission => {

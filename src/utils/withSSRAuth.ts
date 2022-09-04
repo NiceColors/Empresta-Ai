@@ -10,7 +10,7 @@ type WithSSRAuthOptions = {
 }
 
 
-export function withSSRAuth<P>(fn: GetServerSideProps<P>, options?: WithSSRAuthOptions): GetServerSideProps {
+export function withSSRAuth<P extends { [key: string]: unknown }>(fn: GetServerSideProps<P>, options?: WithSSRAuthOptions): GetServerSideProps {
     return async (ctx: GetServerSidePropsContext): Promise<GetServerSidePropsResult<P>> => { //High Order Function 
         const cookies = parseCookies(ctx)
 

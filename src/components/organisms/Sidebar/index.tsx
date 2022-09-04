@@ -42,8 +42,8 @@ export default function Sidebar() {
     const menuItems: IMenuItems[] = [
         {
             name: 'Dashboard',
-            link: '/',
-            icon: <Icon as={DashboardIcon} color={isActive('/')} fontSize={'xl'} />
+            link: '/dashboard',
+            icon: <Icon as={DashboardIcon} color={isActive('/dashboard')} fontSize={'xl'} />
         },
         {
             name: 'Emprestimos',

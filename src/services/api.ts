@@ -1,4 +1,4 @@
-import axios, { AxiosError } from 'axios'
+import axios, { AxiosError, HeadersDefaults } from 'axios'
 import { GetServerSidePropsContext } from 'next';
 import { parseCookies, setCookie } from 'nookies'
 import { AuthTokenError } from './Errors/AuthTokenError';
@@ -9,6 +9,10 @@ interface AxiosErrorResponse {
 type FailedRequestsQueueProps = {
     onSuccess: (token: string) => void;
     onFailure: (error: AxiosError) => void;
+}
+
+interface CommonHeaderProperties extends HeadersDefaults {
+    Authorization: string;
 }
 
 let isRefreshing = false
@@ -60,7 +64,9 @@ export const setupAPIClient = (ctx: GetServerSidePropsContext | undefined = unde
                                     path: "/", // qualquer endereço da app vai ter acesso ao cookie, geralmente usado '/' para um cookie global
                                 });
 
-                                api.defaults.headers['Authorization'] = `Bearer ${token}`;
+                                api.defaults.headers = {
+                                    Authorization: `Bearer ${token}`
+                                } as CommonHeaderProperties;
 
                                 failedRequestQueue.forEach((request: any) => request.onSuccess(token));
                                 failedRequestQueue = [];
@@ -85,7 +91,7 @@ export const setupAPIClient = (ctx: GetServerSidePropsContext | undefined = unde
                         failedRequestQueue.push({
                             onSuccess: (token: string) => {
                                 // quando o processo de refresh estiver finalizado
-                                originalConfig!.headers["Authorization"] = `Bearer ${token}`;
+                                originalConfig!.headers = { Authorization: `Bearer ${token}` };
 
                                 resolve(api(originalConfig));
                             },
