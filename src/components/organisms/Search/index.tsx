@@ -93,7 +93,7 @@ export default function Search() {
                     overflowY={'auto'}
                 >
 
-                    {data.length > 0 ? data?.map(({ title, author, pages }: TSearchBooksProps, i: number) =>
+                    {data?.length > 0 ? data?.map(({ title, author, pages }: TSearchBooksProps, i: number) =>
                         <Box
                             key={i}
                             mb={4}
