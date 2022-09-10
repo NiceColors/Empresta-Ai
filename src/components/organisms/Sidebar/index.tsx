@@ -136,8 +136,6 @@ export default function Sidebar() {
                     onClick={() => signOut()}
                     variant="unstyled" color={'gray.50'} display={'flex'} gap={4}><ExitIcon /> Sair</Button>
             </Box>
-
-
         </Flex>
     )
 }

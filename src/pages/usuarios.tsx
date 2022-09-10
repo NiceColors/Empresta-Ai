@@ -14,6 +14,7 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { HashLoader } from 'react-spinners';
 import { ButtonTable } from '../components/atoms/ButtonTable/Index'
+import { TableContainerCustom } from '../components/atoms/Containers/TableContainer';
 import { UserModal } from '../components/molecules/Users/Modal';
 import { useFetch } from '../hooks/useFetch';
 import { api } from '../services/apiClient';
@@ -49,14 +50,11 @@ const roles = {
 }
 
 
-const SpinnerCustom = <HashLoader color={'#77dd77'} style={{ position: 'absolute', top: '50%', right: '50%' }} />
-
 export default function Usuarios() {
 
     const [selectedUser, setSelectedUser] = useState<IUserProps>({} as IUserProps)
 
     const { isOpen, onOpen, onClose } = useDisclosure()
-    const screen = useBreakpoint()
     const { isOpen: userModalIsOpen, onOpen: userModalOnOpen, onClose: userModalOnClose } = useDisclosure()
     const [isLoading, setIsLoading] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
@@ -73,7 +71,6 @@ export default function Usuarios() {
     const { limit, total }: IDataProps = data
     const cancelRef = React.useRef() as React.RefObject<HTMLButtonElement>
     const toast = useToast()
-
 
     const totalPages = Math.ceil(total / limit)
 
@@ -107,7 +104,6 @@ export default function Usuarios() {
             setPage(page === 0 ? null : 0)
         }
     }
-
 
     const handleEditSubmit = handleSubmit(async (values) => {
         try {
@@ -218,19 +214,7 @@ export default function Usuarios() {
                 overflowY={'hidden'}
             >
 
-                <Box
-                    bgColor={'gray.700'}
-                    p={6}
-                    borderRadius={9}
-                    // minH={'70vh'}
-                    // pos={'relative'}
-                    whiteSpace={'normal'}
-                    overflowX={'scroll'}
-                    maxW={['70vw', '70vw', '90vw']}
-                    width={'100%'}
-                    minH={'76vh'}
-                    overflowY={'scroll'}
-                >
+                <TableContainerCustom>
                     <Flex justifyContent={'space-between'} align={'center'}>
                         <Heading
                             mb={6}
@@ -246,6 +230,7 @@ export default function Usuarios() {
                     <Table
                         variant='simple'
                         colorScheme={'blue'}
+                        size={'sm'}
                     >
                         <Thead>
                             <Tr>
@@ -254,14 +239,11 @@ export default function Usuarios() {
                                 <Th>Cargo</Th>
                                 <Th>CPF</Th>
                                 <Th>Data de nascimento</Th>
-                                <Th>Ações</Th>
+                                <Th isNumeric>Ações</Th>
                             </Tr>
                         </Thead>
                         <Tbody >
                             {data?.users?.map((user: IUserProps, index: number) => {
-
-                                if (isFetching) return SpinnerCustom
-
                                 return (
                                     <Tr key={user.id} >
                                         <Td>{user.name.split(' ').slice(0, 2).join(' ')}</Td>
@@ -269,8 +251,8 @@ export default function Usuarios() {
                                         <Td><Badge {...user.role === 'MANAGER' && { colorScheme: 'purple' }}>{roles[user.role]}</Badge></Td>
                                         <Td>{cpfMask(user.cpf).slice(0, 14)}</Td>
                                         <Td>{new Date(user.birthdate).toLocaleDateString()}</Td>
-                                        <Td>
-                                            <Flex gap={2}>
+                                        <Td isNumeric>
+                                            <Flex gap={2} justifyContent={'flex-end'}>
 
                                                 <IconButton
                                                     variant='outline'
@@ -303,7 +285,8 @@ export default function Usuarios() {
                             )}
                         </Tbody>
                     </Table>
-                </Box>
+                </TableContainerCustom>
+
 
                 {/* Paginação */}
                 <HStack mt={4} justifyContent={'space-between'} align={'center'} spacing={6}>

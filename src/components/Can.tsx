@@ -21,7 +21,7 @@ import { useCan } from "../hooks/useCan";
 interface CanProps {
     children: ReactNode
     permissions?: string[]
-    role?: string[]
+    role?: 'MANAGER' | 'INTERN'
 }
 
 export function Can({ children, permissions, role }: CanProps) {

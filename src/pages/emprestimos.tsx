@@ -4,7 +4,7 @@ import { withSSRAuth } from '../utils/withSSRAuth'
 
 export default function emprestimos() {
   return (
-    <Can permissions={[]} role={['ADMIN']}>
+    <Can permissions={[]} role={'MANAGER'}>
       <div>emprestimos</div>
     </Can>
   )

@@ -31,9 +31,9 @@ export default function Search() {
 
     async function searchBooks(page: number = 0, search: string | number | boolean, limit?: number): Promise<any> {
 
-        const { data } = await api.get(`/books?query=${search}&limit=5`);
+        const { data: response } = await api.get(`/books?query=${search}&limit=5`);
 
-        setData(data.books);
+        setData(response.data);
 
     }
 

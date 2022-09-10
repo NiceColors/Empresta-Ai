@@ -3,7 +3,7 @@
 type ValidateUserPermissionsParams = {
     user: User;
     permissions?: string[];
-    role?: string[];
+    role?: 'MANAGER' | 'INTERN';
 }
 
 export function ValidateUserPermissions({
@@ -25,7 +25,7 @@ export function ValidateUserPermissions({
 
     if (role && role?.length > 0) {
 
-        const hasAllrole = role?.some(permission => {
+        const hasAllrole = role.split("")?.some(permission => {
             return user?.role?.includes(permission)
         })
 

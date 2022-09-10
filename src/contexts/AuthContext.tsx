@@ -6,7 +6,8 @@ import { api } from '../services/apiClient';
 type User = {
     email?: string;
     permissions?: string[];
-    role?: string[];
+    role?: 'MANAGER' | 'INTERN';
+    name: string;
 }
 
 type SignInCredentials = {
@@ -52,9 +53,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         if (token) {
             api.get('/users/me').then(res => {
-                const { email, permissions, role } = res.data
+                const { email, permissions, name, role } = res.data
                 console.log(res.data)
-                setUser({ email, permissions, role })
+                setUser({ email, permissions, name, role })
             }).catch(() => {
                 signOut()
             })
@@ -88,7 +89,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         })
 
         const { token, refreshToken } = res.data
-        const { permissions, role } = res.data.user
+        const { permissions, role, name } = res.data.user
 
         setCookie(undefined, 'nextauth.token', token)
         setCookie(undefined, 'nextauth.refreshToken', refreshToken)
@@ -96,7 +97,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setUser({
             email,
             permissions,
-            role
+            role,
+            name
         })
 
         //tipar api

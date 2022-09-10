@@ -4,7 +4,7 @@ import { ValidateUserPermissions } from "../utils/validateUserPermissions";
 
 type UseCanParams = {
     permissions?: string[];
-    role?: string[];
+    role?: 'MANAGER' | 'INTERN';
 }
 
 export function useCan({ permissions, role }: UseCanParams) {

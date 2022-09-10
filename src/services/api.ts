@@ -20,13 +20,19 @@ let failedRequestQueue: any = [];
 
 export const setupAPIClient = (ctx: GetServerSidePropsContext | undefined = undefined) => {
     let cookies = parseCookies(ctx);
+
+    const token = `Bearer ${cookies["nextauth.token"]}`
+
     const apiUrl = process.env.NEXT_PUBLIC_API_URL
     const api = axios.create({
         baseURL: apiUrl,
         headers: {
-            Authorization: `Bearer ${cookies["nextauth.token"]}`,
+            Authorization: token,
         },
     });
+
+
+
     /* 
       request: intercepta a requisição antes que ela seja feita
       response: intercepta a requisição depois que ela for feita, ou seja, posso fazer uma funcionalidade depois da resposta do backend
@@ -37,13 +43,15 @@ export const setupAPIClient = (ctx: GetServerSidePropsContext | undefined = unde
         (response) => {
             return response;
         },
-        (error: AxiosError<AxiosErrorResponse>) => {
+        async (error: AxiosError<AxiosErrorResponse>) => {
 
             if (error!.response!.status === 401) {
 
                 let message = error.response!.data.message;
 
-                if (message === "jwt expired" || message === "invalid signature" || message === "Invalid token") {
+                if ('error' in error.response!.data)
+                    return Promise.reject(error)
+                else if (message === "jwt expired" || message === "invalid signature" || message === "Invalid token") {
                     // renovar o token
                     cookies = parseCookies(ctx)
 
@@ -53,41 +61,36 @@ export const setupAPIClient = (ctx: GetServerSidePropsContext | undefined = unde
                     if (!isRefreshing) {
                         // Quando o token estiver inválido, ele atualiza o token. O refreshing é feito uma única vez, quando o token não está válido.
                         isRefreshing = true;
-                        api.post("/refresh-token", {
-                            token: refreshToken,
-                        })
-                            .then((response) => {
-                                const { token } = response.data;
-                                console.log('token do refresh token:', token)
-                                setCookie(ctx, "nextauth.token", token, {
-                                    maxAge: 60 * 60 * 24 * 30, // (30 days) quanto tempo o cookie deve ser mantido no navegador
-                                    path: "/", // qualquer endereço da app vai ter acesso ao cookie, geralmente usado '/' para um cookie global
-                                });
-
-                                api.defaults.headers = {
-                                    Authorization: `Bearer ${token}`
-                                } as CommonHeaderProperties;
-
-                                failedRequestQueue.forEach((request: any) => request.onSuccess(token));
-                                failedRequestQueue = [];
+                        try {
+                            const response = await api.post("/refresh-token", {
+                                token: refreshToken,
                             })
-                            .catch((err) => {
-
-                                failedRequestQueue.forEach((request: any) => request.onFailure(err));
-                                failedRequestQueue = [];
-
-                                if (typeof window !== "undefined") {
-                                    signOut();
-                                }
-                            })
-                            .finally(() => {
-                                isRefreshing = false;
+                            const { token } = response.data;
+                            setCookie(ctx, "nextauth.token", token, {
+                                maxAge: 60 * 60 * 24 * 30, // (30 days) quanto tempo o cookie deve ser mantido no navegador
+                                path: "/", // qualquer endereço da app vai ter acesso ao cookie
                             });
+
+                            api.defaults.headers = {
+                                'Authorization': `Bearer ${token}`
+                            } as CommonHeaderProperties;
+
+                            failedRequestQueue.forEach((request: any) => request.onSuccess(token));
+                            failedRequestQueue = [];
+
+                        } catch (err) {
+                            failedRequestQueue.forEach((request: any) => request.onFailure(err));
+                            failedRequestQueue = [];
+
+                            if (typeof window !== "undefined") {
+                                signOut();
+                            }
+                        } finally {
+                            isRefreshing = false;
+                        }
                     }
 
                     return new Promise((resolve, reject) => {
-
-
                         failedRequestQueue.push({
                             onSuccess: (token: string) => {
                                 // quando o processo de refresh estiver finalizado

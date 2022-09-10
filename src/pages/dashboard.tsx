@@ -24,20 +24,17 @@ export default function Dashboard() {
     const { user } = useContext(AuthContext)
 
     useEffect(() => {
-
         try {
             (async () => {
                 const response = await api.get(`/books?limit=50`);
-
-                setData(response.data.books)
-
+                setData(response.data.data)
             })();
         } catch (error) {
             console.log(error);
         }
     }, [])
 
-    const uniqueISBNs = [... new Set(data.map((book: any) => book.isbn))]
+    const uniqueISBNs = [... new Set(data?.map((book: any) => book.isbn))]
     const listOfBooks = !isLoading ? uniqueISBNs.map(item => data.find((book: any) => book.isbn === item)) : skeletonArray
     const booksCount = (isbn: string) => data.filter((book: any) => book.isbn === isbn).length
 

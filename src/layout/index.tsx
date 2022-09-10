@@ -1,9 +1,14 @@
 import { Box, Flex, Grid, GridItem, Input, Text } from '@chakra-ui/react'
-import React, { ReactElement } from 'react'
+import React, { FC, ReactElement } from 'react'
 import Search from '../components/organisms/Search'
 import Sidebar from '../components/organisms/Sidebar'
 
-const LayoutLC = (children: ReactElement) => {
+interface IProps {
+  children?: ReactElement
+}
+
+
+export const Layout: FC<IProps> = ({ children }) => {
 
   return (
     <Grid
@@ -33,4 +38,3 @@ const LayoutLC = (children: ReactElement) => {
   )
 }
 
-export default LayoutLC

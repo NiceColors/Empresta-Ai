@@ -6,7 +6,7 @@ import { AuthTokenError } from "../services/Errors/AuthTokenError"
 
 type WithSSRAuthOptions = {
     permissions?: string[];
-    role?: string[];
+    role?: 'MANAGER' | 'INTERN';
 }
 
 
@@ -27,7 +27,7 @@ export function withSSRAuth<P extends { [key: string]: unknown }>(fn: GetServerS
 
 
         if (options) {
-            const user = decode<{ permissions: string[], role: string[] }>(token)
+            const user = decode<{ permissions: string[], role: 'MANAGER' | 'INTERN' }>(token)
 
             const { permissions, role } = options
 
