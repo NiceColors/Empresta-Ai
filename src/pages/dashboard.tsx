@@ -52,7 +52,8 @@ export default function Dashboard() {
                 <Charts loading={isLoading} />
             </SimpleGrid>
 
-            <Grid templateColumns={{ base: 'repeat(1fr)', lg: '1.5fr 1fr' }} gap={24}>
+            <Grid templateColumns={{ base: 'repeat(1fr)', lg: '1.5fr 1fr' }} gap={24} overflowY={'hidden'}
+            >
 
                 <GridItem>
                     <Flex gap={4}>
@@ -80,7 +81,7 @@ export default function Dashboard() {
                             sm: 'repeat(2, 1fr)',
                             md: 'repeat(3, 1fr)',
                             lg: 'repeat(3, 1fr)',
-                            xl: 'repeat(4, 1fr)',
+                            xl: 'repeat(3, 1fr)',
                         }}
                     >
                         {listOfBooks?.map((item: any, index: any) =>

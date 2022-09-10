@@ -5,13 +5,13 @@ const styles = {
         body: {
             bg: '#1c1c1c',
             lineHeight: 'base',
-            color: 'gray.50'
+            color: 'gray.50',
         },
         '*': {
             boxSizing: 'border-box',
         },
         'html, body': {
-            height: '100%',
+            height: '100vh',
         },
         ...scrollbarStyle,
         '.active-link': {
@@ -45,6 +45,7 @@ const scrollbarStyle = {
 
     '::-webkit-scrollbar': {
         width: '0.4em',
+        height: '4px'
     },
     '::-webkit-scrollbar-track': {
         background: '#1c1c1c',

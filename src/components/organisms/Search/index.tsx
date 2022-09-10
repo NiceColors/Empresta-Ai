@@ -45,7 +45,7 @@ export default function Search() {
     return (
         <>
             <Stack
-                mb={16}
+                mb={12}
                 mt={2}
                 maxW="30vw"
                 position={'relative'}

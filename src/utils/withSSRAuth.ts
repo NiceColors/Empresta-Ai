@@ -41,7 +41,7 @@ export function withSSRAuth<P extends { [key: string]: unknown }>(fn: GetServerS
             if (!userHasValidPermissions) {
                 return {
                     redirect: {
-                        destination: '/',
+                        destination: '/dashboard',
                         permanent: false
                     }
                 }

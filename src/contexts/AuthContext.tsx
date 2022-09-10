@@ -105,7 +105,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             return config;
         });
 
-        router.push('/')
+        router.push('/dashboard')
 
     }
 
