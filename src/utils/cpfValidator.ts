@@ -1,6 +1,6 @@
-const formatCPF = (data: unknown | number | string) => {
-    if (typeof data === 'string') return data.replace(/[^0-9]/g, '');
-    return data?.toString() ?? '';
+const formatCPF = (data: unknown) => {
+    if (typeof (data) === 'string' || typeof (data) === 'number') return data.toString().replace(/[^0-9]/g, '');
+    return '';
 };
 
 export const isValid = (cpf: string): boolean => {
@@ -26,7 +26,7 @@ export const isValid = (cpf: string): boolean => {
         let mod = sum % 11 < 2 ? 0 : 11 - (sum % 11);
 
         if (mod !== +numberArray[9]) isValid = false;
-        
+
         else {
             sum = 0;
             numberArray.forEach((item, index) =>
