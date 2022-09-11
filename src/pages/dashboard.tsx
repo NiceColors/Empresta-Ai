@@ -1,16 +1,10 @@
-import { Avatar, Badge, Box, Flex, Grid, GridItem, Heading, Show, SimpleGrid, Skeleton, Spinner, Text, theme } from '@chakra-ui/react'
+import { Avatar, Badge, Box, Flex, Grid, GridItem, Heading, SimpleGrid, Skeleton, Text } from '@chakra-ui/react'
 import { ChevronRightIcon } from '@radix-ui/react-icons';
-import { ApexOptions } from 'apexcharts';
-import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion';
-import dynamic from 'next/dynamic';
-import Image from 'next/image';
+
 import Link from 'next/link'
 import React, { useContext, useEffect, useState } from 'react'
-import { Suspense } from 'react';
 import { Charts } from '../components/molecules/Charts/Index';
 import { AuthContext } from '../contexts/AuthContext';
-import { useDebounce } from '../hooks/useDebounce';
-import { setupAPIClient } from '../services/api';
 import { api } from '../services/apiClient';
 import { withSSRAuth } from '../utils/withSSRAuth';
 // eslint-disable-next-line react/prop-types

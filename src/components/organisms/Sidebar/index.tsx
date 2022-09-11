@@ -67,9 +67,6 @@ export default function Sidebar() {
         }
     ]
 
-
-    console.log(isMobile)
-
     return (
 
         <Flex

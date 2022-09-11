@@ -12,7 +12,6 @@ import {
 import { Pencil2Icon, TrashIcon } from '@radix-ui/react-icons';
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
-import { HashLoader } from 'react-spinners';
 import { ButtonTable } from '../components/atoms/ButtonTable/Index'
 import { TableContainerCustom } from '../components/atoms/Containers/TableContainer';
 import { UserModal } from '../components/molecules/Users/Modal';
@@ -51,12 +50,11 @@ const roles = {
 
 
 export default function Usuarios() {
-
+    const [isLoading, setIsLoading] = useState(false)
     const [selectedUser, setSelectedUser] = useState<IUserProps>({} as IUserProps)
 
     const { isOpen, onOpen, onClose } = useDisclosure()
     const { isOpen: userModalIsOpen, onOpen: userModalOnOpen, onClose: userModalOnClose } = useDisclosure()
-    const [isLoading, setIsLoading] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
 
 
@@ -257,7 +255,7 @@ export default function Usuarios() {
                                                 <IconButton
                                                     variant='outline'
                                                     colorScheme='yellow'
-                                                    aria-label='Delete user'
+                                                    aria-label='Edit user'
                                                     icon={<Pencil2Icon />}
                                                     onClick={() => {
                                                         setSelectedUser(user)

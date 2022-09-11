@@ -58,14 +58,14 @@ export const BookDetails: FC<IBookDetailsProps> = (details) => {
             <Box>
                 <Text fontWeight={400} color="whiteAlpha.800" mt={6}>
                     <strong>Sinopse:</strong> <br />
-                    <Box
-                        h={'20vh'}
-                        overflowY={'auto'}
-                    >
-                        {synopsis ?? lorem}
-                    </Box>
 
                 </Text>
+                <Box
+                    h={'20vh'}
+                    overflowY={'auto'}
+                >
+                    {synopsis ?? lorem}
+                </Box>
             </Box>
             <Badge my={4} colorScheme={!!status ? 'green' : 'red'}>{!!status ? 'ATIVO' : 'INATIVO'}</Badge>
         </Box>
