@@ -8,7 +8,7 @@ import { theme } from '../styles/theme'
 
 function MyApp({ Component, pageProps, router }: AppProps) {
 
-  const isLoginPage = router.asPath === '/login' || router.asPath === '/'
+  const isLoginPage = router.asPath === '/login'
 
   return (
     <ChakraProvider theme={theme}>

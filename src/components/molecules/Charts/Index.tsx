@@ -3,6 +3,7 @@ import { Box, Skeleton, Text, theme } from '@chakra-ui/react'
 import { ApexOptions } from 'apexcharts';
 import dynamic from 'next/dynamic';
 import React from 'react'
+import { api } from '../../../services/apiClient';
 const Chart = dynamic(() => import('react-apexcharts'), {
     ssr: false
 });
@@ -17,6 +18,19 @@ interface ChartProps {
 }
 
 export const Charts = ({ loading = false, ...props }: ChartProps) => {
+
+    const [loans, setLoans] = React.useState<any>([])
+    const getData = async () => {
+        const { data: response } = await api.get('/loans?limit=50')
+        setLoans(response.data)
+    }
+
+    React.useEffect(() => {
+        getData()
+    }, [])
+
+    const dates = loans.map((item: { startDate: string }) => new Date(item.startDate).toDateString())
+
 
     const options: ApexOptions = {
         chart: {
@@ -45,15 +59,7 @@ export const Charts = ({ loading = false, ...props }: ChartProps) => {
             axisTicks: {
                 color: theme.colors.gray[600]
             },
-            categories: [
-                '2021-03-18T00:00:00.000z',
-                '2021-03-19T00:00:00.000z',
-                '2021-03-20T00:00:00.000z',
-                '2021-03-21T00:00:00.000z',
-                '2021-03-22T00:00:00.000z',
-                '2021-03-23T00:00:00.000z',
-                '2021-03-24T00:00:00.000z',
-            ]
+            categories: dates
         },
         fill: {
             opacity: 0.3,
@@ -69,11 +75,16 @@ export const Charts = ({ loading = false, ...props }: ChartProps) => {
     const series = [
         {
             name: '2021',
-            data: [31, 120, 10, 228, 61, 18, 109]
+            data: [0, 2, 1, 1, 1]
         },
         {
             name: '2022',
-            data: [11, 220, 30, 140, 10, 60, 70]
+            data: dates.map((item: any) => {
+
+                console.log(loans.filter((loan: any) => new Date(loan.startDate).toDateString() === item)?.length)
+
+                return loans.filter((loan: any) => new Date(loan.startDate).toDateString() === item)?.length
+            })
         },
     ]
 

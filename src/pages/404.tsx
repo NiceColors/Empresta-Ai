@@ -33,7 +33,7 @@ const Page404 = () => {
 
                 <Box textAlign="center" marginTop={4}>
                     <Text color={'white'} mb={3}>Tudo bem!</Text>
-                    <Link href="/dashboard" passHref>
+                    <Link href="/" passHref>
                         <Button
                             backgroundColor={'white'}
                             color={'gray.700'}

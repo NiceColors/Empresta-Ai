@@ -7,7 +7,7 @@ import { BookAction } from './BookAction'
 export const BookDetails: FC<IBookDetailsProps> = (details) => {
     const lorem = 'Lorem ipsum Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad vero, modi dolorem totam illo, nemo accusantium eaque laboriosam vel nihil quis, temporibus vitae necessitatibus tempore minus ullam commodi aliquam corporis. dolor sit amet consectetur adipisicing elit.Ad vero, modi dolorem totam illo, nemo accusantium eaque laboriosam vel nihil quis, temporibus vitae necessitatibus tempore minus ullam commodi aliquam corporis.Lorem ipsum dolor sit amet consectetur adipisicing elit.Ad vero, modi dolorem totam illo, nemo accusantium eaque laboriosam vel nihil quis, temporibus vitae necessitatibus tempore minus ullam commodi aliquam corporis.'
 
-    const { title, status, author, publisher, loanRate, synopsis, pages, bannerUrl, releaseYear, createdAt } = details
+    const { title, status, author, publisher, loanRate, synopsis, pages,  bannerUrl, releaseYear, createdAt } = details
 
 
     const screen = useBreakpointValue({
@@ -17,7 +17,7 @@ export const BookDetails: FC<IBookDetailsProps> = (details) => {
 
     return (
         <Box
-            bgColor={'gray.700'}
+            bgColor={'gray.900'}
             w={'100%'}
             borderRadius={14}
             px={6}

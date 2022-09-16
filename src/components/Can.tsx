@@ -63,7 +63,7 @@ const Page403 = () => {
 
                 <Box textAlign="center" marginTop={4}>
                     <Text color={'white'} mb={3}>Você não tem autorização para acessar essa página</Text>
-                    <Link href="/dashboard" passHref>
+                    <Link href="/" passHref>
                         <Button
                             backgroundColor={'white'}
                             color={'gray.700'}

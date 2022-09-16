@@ -20,7 +20,7 @@ interface IClientProps {
     id: number;
     name: string;
     cpf: string;
-    birthdate: strig | date;
+    birthdate: Date | string;
     created_at: string;
     updated_at: string;
 }
@@ -31,11 +31,28 @@ interface IBookDetailsProps {
     title: string;
     author: string;
     pages?: number
+    loanId?: string
     publisher: string;
     status: boolean;
     loanRate?: number;
     synopsis?: string;
     bannerUrl?: string;
-    releaseYear: Date;
-    createdAt?: Date;
+    releaseYear: Date | string;
+    createdAt?: Date | string;
+}
+
+interface ILoanProps {
+    id: string;
+    employeeName: string;
+    employeeId: string;
+    clientName: string;
+    clientId: string;
+    bookTitle: string;
+    bookId: string;
+    loanRateValue?: number;
+    status: boolean;
+    startDate: Date | string;
+    endDate: Date | string;
+    createdAt: Date | string;
+    updatedAt: Date | string;
 }

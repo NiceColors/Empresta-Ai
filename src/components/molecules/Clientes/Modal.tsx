@@ -45,10 +45,10 @@ export const ClientModal = ({ isOpen, isEdit, setValue, isLoading, onClose, onSu
                         <ModalBody>
                             <Grid
                                 gap={3}
-                                templateColumns={'1fr 1fr'}
+                                templateColumns={'repeat(2, 1fr)'}
                                 gridGap={'1rem'}
                             >
-                                <GridItem>
+                                <GridItem colSpan={2}>
                                     <Text fontSize={'14px'} mb={2}>Nome</Text>
                                     <InputGroup>
                                         <InputLeftElement

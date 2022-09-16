@@ -1,5 +1,6 @@
 import { AlertDialog, AlertDialogBody, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, Badge, Box, Button, Flex, Grid, GridItem, Heading, HStack, Icon, IconButton, Image, Tab, TabList, TabPanel, TabPanels, Tabs, Text, useBreakpointValue, useDisclosure, useToast } from '@chakra-ui/react'
 import { ArrowTopLeftIcon, ArrowTopRightIcon, Pencil2Icon, TrashIcon } from '@radix-ui/react-icons'
+import { useRouter } from 'next/router'
 import React, { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { ButtonTable } from '../components/atoms/ButtonTable/Index'
@@ -30,7 +31,7 @@ export default function Livros() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { isOpen: bookModalIsOpen, onOpen: bookModalOnOpen, onClose: bookModalOnClose } = useDisclosure()
   const [isEdit, setIsEdit] = useState(false)
-
+  const router = useRouter()
   const [page, setPage] = useState<number | null>(0)
 
   const { data: response, isFetching, error } = useFetch('/books?limit=32', {
@@ -108,7 +109,6 @@ export default function Livros() {
     try {
       const { data: response } = await api.post(`/books`, {
         ...values,
-        birthdate: new Date(),
       })
       const createMessage = response?.message ?? 'O livro selecionado foi criado com sucesso.'
       toast({
@@ -185,6 +185,18 @@ export default function Livros() {
 
   }, [selectedBook])
 
+  useEffect(() => {
+
+    if (router.query.reload === 'true') {
+      setPage(page === 0 ? null : 0)
+      setSelectedBook((prevState) => ({ ...prevState, status: !prevState.status }))
+    }
+
+
+  }, [router])
+
+
+  console.log(router.pathname)
 
   return (
     <Box>
@@ -195,7 +207,7 @@ export default function Livros() {
         }
         gap={4}
       >
-        {screen && <BookAction src={selectedBook?.bannerUrl} status={selectedBook?.status} />}
+        {screen && <BookAction hash={selectedBook?.loanId} src={selectedBook?.bannerUrl} status={selectedBook?.status} />}
         <BookContainer
         >
           <BookDetails {...selectedBook} />

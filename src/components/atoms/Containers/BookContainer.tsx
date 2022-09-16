@@ -7,14 +7,13 @@ interface IProps {
 const BookContainer: FC<IProps> = ({ children, ...props }) => {
     return (
         <Flex
-            bgColor={'gray.700'}
+            bgColor={'gray.900'}
             borderRadius={14}
             flexDirection={'column'}
             justifyContent={'space-between'}
             px={6}
             py={4}
             gap={8}
-
         >
             {children}
         </Flex>

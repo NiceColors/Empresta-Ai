@@ -30,7 +30,7 @@ interface IDataProps {
 type FormValues = {
   name: string;
   email: string;
-  birthdate: string;
+  birthdate: Date | string;
   permissions: {
     value: string;
   }[];
@@ -201,9 +201,11 @@ export default function Clientes() {
 
   useEffect(() => {
 
+    console.log(selectedClient.birthdate, new Date(selectedClient.birthdate))
+
     reset({
       ...selectedClient,
-      birthdate: new Date(selectedClient.birthdate).toLocaleDateString(),
+      birthdate: selectedClient.birthdate && new Date(selectedClient.birthdate).toISOString().split('T')[0],
       cpf: cpfMask(selectedClient.cpf)
     })
 
@@ -226,7 +228,7 @@ export default function Clientes() {
               setIsEdit(false)
               userModalOnOpen()
               reset({})
-            }}>+ Add</Button>
+            }}>+ Criar</Button>
           </Flex>
           <Table
             variant='simple'
@@ -246,7 +248,7 @@ export default function Clientes() {
                   <Tr key={client.id} >
                     <Td>{client.name.split(' ').slice(0, 2).join(' ')}</Td>
                     <Td>{cpfMask(client.cpf).slice(0, 14)}</Td>
-                    <Td>{new Date(client.birthdate).toLocaleDateString()}</Td>
+                    <Td>{Intl.DateTimeFormat('sv-SE').format(new Date(client.birthdate))}</Td>
                     <Td>
                       <Flex gap={2} justifyContent={'flex-end'}>
 

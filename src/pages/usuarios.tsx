@@ -28,7 +28,7 @@ interface IDataProps {
 type FormValues = {
     name: string;
     email: string;
-    birthdate: string;
+    birthdate: Date | string;
     permissions: {
         value: string;
     }[];
@@ -60,13 +60,13 @@ export default function Usuarios() {
 
     const { handleSubmit, reset, register, setValue, control, formState: { errors }, setError } = useForm<FormValues>()
     const [page, setPage] = useState<number | null>(0)
-    const { data, isFetching, error } = useFetch('/users?limit=8', {
+    const { data: response, isFetching, error } = useFetch('/users?limit=8', {
         params: {
             page
         }
     });
 
-    const { limit, total }: IDataProps = data
+    const { limit, total, data }: IDataProps = response
     const cancelRef = React.useRef() as React.RefObject<HTMLButtonElement>
     const toast = useToast()
 
@@ -198,9 +198,11 @@ export default function Usuarios() {
 
     useEffect(() => {
 
+        console.log(selectedUser.birthdate)
+
         reset({
             ...selectedUser,
-            birthdate: new Date(selectedUser.birthdate).toLocaleDateString(),
+            birthdate: selectedUser.birthdate && new Date(selectedUser.birthdate).toISOString().split('T')[0],
             cpf: cpfMask(selectedUser.cpf)
         })
 
@@ -223,7 +225,7 @@ export default function Usuarios() {
                             setIsEdit(false)
                             userModalOnOpen()
                             reset({})
-                        }}>+ Add</Button>
+                        }}>+ Criar</Button>
                     </Flex>
                     <Table
                         variant='simple'
@@ -241,7 +243,7 @@ export default function Usuarios() {
                             </Tr>
                         </Thead>
                         <Tbody >
-                            {data?.users?.map((user: IUserProps, index: number) => {
+                            {data?.map((user: IUserProps, index: number) => {
                                 return (
                                     <Tr key={user.id} >
                                         <Td>{user.name.split(' ').slice(0, 2).join(' ')}</Td>

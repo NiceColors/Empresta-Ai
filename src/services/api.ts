@@ -20,7 +20,7 @@ let failedRequestQueue: any = [];
 
 export const setupAPIClient = (ctx: GetServerSidePropsContext | undefined = undefined) => {
     let cookies = parseCookies(ctx);
-
+    console.log('cookies', cookies);
     const token = `Bearer ${cookies["nextauth.token"]}`
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL
@@ -94,6 +94,7 @@ export const setupAPIClient = (ctx: GetServerSidePropsContext | undefined = unde
                         failedRequestQueue.push({
                             onSuccess: (token: string) => {
                                 // quando o processo de refresh estiver finalizado
+                                console.log('finalizou o refresh', token)
                                 originalConfig!.headers = { Authorization: `Bearer ${token}` };
 
                                 resolve(api(originalConfig));

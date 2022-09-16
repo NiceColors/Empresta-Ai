@@ -7,7 +7,7 @@ export function withSSRGuest<P extends { [key: string]: unknown }>(fn: GetServer
         if (cookies["nextauth.token"]) {
             return {
                 redirect: {
-                    destination: '/dashboard',
+                    destination: '/',
                     permanent: false
                 }
             }
