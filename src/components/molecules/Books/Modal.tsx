@@ -1,6 +1,6 @@
 import { CalendarIcon, EmailIcon } from '@chakra-ui/icons';
 import {
-    Box, Button, Grid, GridItem,
+    Box, Button, FormControl, Grid, GridItem,
     Input, InputGroup, InputLeftElement, Modal,
     ModalBody, ModalCloseButton, ModalContent, ModalFooter,
     ModalHeader, ModalOverlay, Radio, RadioGroup, Stack, Text, Textarea
@@ -17,13 +17,17 @@ interface IBookModalProps {
     isEdit: boolean;
     isLoading: boolean;
     onClose: () => void;
-    onSubmit: (data: any) => void;
     control: any;
-    register: any;
-    setValue: any;
+    formProps: any
 }
 
-export const BookModal = ({ isOpen, isEdit, setValue, isLoading, onClose, onSubmit, register, control, ...rest }: IBookModalProps) => {
+export const BookModal = ({ isOpen, isEdit, formProps, isLoading, onClose, control, ...rest }: IBookModalProps) => {
+
+
+
+    const { register, formState: { errors }, setValue, getValues, setError, clearErrors } = formProps
+
+
 
     return (
         <>
@@ -49,7 +53,8 @@ export const BookModal = ({ isOpen, isEdit, setValue, isLoading, onClose, onSubm
                                 gridGap={'1rem'}
                             >
                                 <GridItem colSpan={12}>
-                                    <Text fontSize={'14px'} mb={2}>Titulo</Text>
+                                    <Text fontSize={'14px'} mb={2}>Autor</Text>
+
                                     <InputGroup>
                                         <InputLeftElement
                                             pointerEvents='none'
@@ -57,26 +62,7 @@ export const BookModal = ({ isOpen, isEdit, setValue, isLoading, onClose, onSubm
                                             children={<RiUser2Line color={'gray.500'} />}
                                         />
                                         <Input
-                                            {...register("title")}
-                                            errorBorderColor='red.300'
-                                            focusBorderColor='green.200'
-                                            variant="outline"
-                                            type="text"
-                                            placeholder="Nome do livro"
-                                            borderColor={'gray.300'}
-                                        />
-                                    </InputGroup>
-                                </GridItem>
-                                <GridItem colSpan={12}>
-                                    <Text fontSize={'14px'} mb={2}>Autor</Text>
-
-                                    <InputGroup>
-                                        <InputLeftElement
-                                            pointerEvents='none'
-                                            // eslint-disable-next-line react/no-children-prop
-                                            children={<EmailIcon color={'gray.500'} />}
-                                        />
-                                        <Input
+                                            required
                                             {...register("author")}
                                             errorBorderColor='red.300'
                                             focusBorderColor='green.200'
@@ -87,6 +73,27 @@ export const BookModal = ({ isOpen, isEdit, setValue, isLoading, onClose, onSubm
                                         />
                                     </InputGroup>
                                 </GridItem>
+
+                                <GridItem colSpan={12}>
+                                    <Text fontSize={'14px'} mb={2}>Titulo</Text>
+                                    <FormControl isInvalid={errors.title}>
+                                        <InputGroup>
+
+                                            <Input
+                                                required
+                                                {...register("title")}
+                                                maxLength={110}
+                                                errorBorderColor='red.300'
+                                                focusBorderColor='green.200'
+                                                variant="outline"
+                                                type="text"
+                                                placeholder="Nome do livro"
+                                                borderColor={'gray.300'}
+                                            />
+                                        </InputGroup>
+                                    </FormControl>
+                                </GridItem>
+
                                 <GridItem colSpan={12}>
                                     <Text fontSize={'14px'} mb={2}>Data de publicação</Text>
 
@@ -97,6 +104,7 @@ export const BookModal = ({ isOpen, isEdit, setValue, isLoading, onClose, onSubm
                                             children={<CalendarIcon color={'gray.500'} />}
                                         />
                                         <Input
+                                            required
                                             {...register("releaseYear",)}
                                             errorBorderColor='red.300'
                                             focusBorderColor='green.200'
@@ -117,6 +125,7 @@ export const BookModal = ({ isOpen, isEdit, setValue, isLoading, onClose, onSubm
                                             children={<EmailIcon color={'gray.500'} />}
                                         /> */}
                                         <Input
+                                            required
                                             {...register("isbn")}
                                             errorBorderColor='red.300'
                                             focusBorderColor='green.200'
@@ -137,6 +146,7 @@ export const BookModal = ({ isOpen, isEdit, setValue, isLoading, onClose, onSubm
                                             children={<EmailIcon color={'gray.500'} />}
                                         /> */}
                                         <Input
+                                            required
                                             {...register("bannerUrl")}
                                             errorBorderColor='red.300'
                                             focusBorderColor='green.200'
@@ -157,12 +167,13 @@ export const BookModal = ({ isOpen, isEdit, setValue, isLoading, onClose, onSubm
                                             children={<EmailIcon color={'gray.500'} />}
                                         /> */}
                                         <Input
+                                            required
                                             {...register("publisher")}
                                             errorBorderColor='red.300'
                                             focusBorderColor='green.200'
                                             variant="outline"
                                             type="text"
-                                            placeholder="000.000.000-00"
+                                            placeholder="Editora"
                                             borderColor={'gray.300'}
                                         />
                                     </InputGroup>
@@ -177,6 +188,7 @@ export const BookModal = ({ isOpen, isEdit, setValue, isLoading, onClose, onSubm
                                             children={<EmailIcon color={'gray.500'} />}
                                         /> */}
                                         <Input
+                                            required
                                             {...register("pages")}
                                             errorBorderColor='red.300'
                                             focusBorderColor='green.200'
@@ -197,6 +209,7 @@ export const BookModal = ({ isOpen, isEdit, setValue, isLoading, onClose, onSubm
                                             children={<EmailIcon color={'gray.500'} />}
                                         /> */}
                                         <Textarea
+                                            required
                                             {...register("synopsis")}
                                             errorBorderColor='red.300'
                                             focusBorderColor='green.200'
@@ -214,7 +227,7 @@ export const BookModal = ({ isOpen, isEdit, setValue, isLoading, onClose, onSubm
                             <Button colorScheme='red.300' size={'sm'} mr={3} onClick={onClose}>
                                 Cancelar
                             </Button>
-                            <Button colorScheme={'green'} size={'sm'} onClick={onSubmit} isLoading={isLoading}>Salvar</Button>
+                            <Button colorScheme={'green'} size={'sm'} type={'submit'} isLoading={isLoading}>Salvar</Button>
                         </ModalFooter>
                     </Box>
                 </ModalContent>

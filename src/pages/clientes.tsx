@@ -60,7 +60,8 @@ export default function Clientes() {
   const [isEdit, setIsEdit] = useState(false)
 
 
-  const { handleSubmit, reset, register, setValue, control, formState: { errors }, setError } = useForm<FormValues>()
+  const formProps = useForm<FormValues>()
+  const { handleSubmit, reset, register, setValue, control, formState: { errors }, setError } = formProps
   const [page, setPage] = useState<number | null>(0)
   const { data: response, isFetching, error } = useFetch('/clients?limit=7', {
     params: {
@@ -298,16 +299,17 @@ export default function Clientes() {
 
         </HStack>
         <Dialog />
-        <ClientModal
-          isOpen={userModalIsOpen}
-          onClose={userModalOnClose}
-          onSubmit={isEdit ? handleEditSubmit : handleCreateSubmit}
-          isEdit={isEdit}
-          isLoading={isLoading}
-          control={control}
-          register={register}
-          setValue={setValue}
-        />
+        <Box as={'form'} action=""
+          onSubmit={isEdit ? handleEditSubmit : handleCreateSubmit}>
+          <ClientModal
+            isOpen={userModalIsOpen}
+            onClose={userModalOnClose}
+            isEdit={isEdit}
+            isLoading={isLoading}
+            control={control}
+            formProps={formProps}
+          />
+        </Box>
       </Grid>
 
     </>

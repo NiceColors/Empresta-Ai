@@ -22,17 +22,21 @@ interface CanProps {
     children: ReactNode
     permissions?: string[]
     role?: 'MANAGER' | 'INTERN'
+    isPage: boolean
 }
 
-export function Can({ children, permissions, role }: CanProps) {
+export function Can({ children, permissions, isPage, role }: CanProps) {
 
     const userCanSeeComponent = useCan({ permissions, role })
     const router = useRouter()
 
-    if (!userCanSeeComponent)
+    if (!userCanSeeComponent && isPage)
         return (
             <Page403 />
         )
+    else if (!userCanSeeComponent && !isPage)
+        return null
+
 
     return (
         <>

@@ -27,7 +27,8 @@ export default function Livros() {
 
 
   const [isLoading, setIsLoading] = useState(false)
-  const { handleSubmit, reset, register, setValue, control, formState: { errors }, setError } = useForm<any>()
+  const formProps = useForm()
+  const { handleSubmit, reset, control } = formProps
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { isOpen: bookModalIsOpen, onOpen: bookModalOnOpen, onClose: bookModalOnClose } = useDisclosure()
   const [isEdit, setIsEdit] = useState(false)
@@ -196,8 +197,6 @@ export default function Livros() {
   }, [router])
 
 
-  console.log(router.pathname)
-
   return (
     <Box>
 
@@ -269,32 +268,34 @@ export default function Livros() {
 
                     />
                     <Flex gap={2} justifyContent={'flex-end'} px={2} py={3}>
+                      {book.status &&
+                        <IconButton
+                          size={'sm'}
+                          variant='outline'
+                          colorScheme='red'
+                          aria-label='Delete nook'
+                          _hover={{
+                            boxShadow: 'md',
+                            backgroundColor: '#c51c2af0',
+                            color: '#fff'
+                          }}
+                          transition='all 0.25s ease-in-out'
+                          icon={<TrashIcon />}
+                          onClick={() => {
+                            setSelectedBook(book)
+                            onOpen()
+                          }}
+                        />}
                       <IconButton
                         size={'sm'}
                         variant='outline'
-                        colorScheme='red'
-                        aria-label='Delete nook'
+                        colorScheme='green'
                         _hover={{
                           boxShadow: 'md',
-                          backgroundColor: '#c51c2af0',
+                          backgroundColor: '#7a7226ee',
                           color: '#fff'
                         }}
-                        transition='all 0.25s ease-in-out'
-                        icon={<TrashIcon />}
-                        onClick={() => {
-                          setSelectedBook(book)
-                          onOpen()
-                        }}
-                      />
-                      <IconButton
-                        size={'sm'}
-                        variant='outline'
-                        colorScheme='yellow'
-                        _hover={{
-                          boxShadow: 'md',
-                          backgroundColor: '#94881def',
-                          color: '#fff'
-                        }}
+                        color={book.status ? '#7a7226ee' : '#c51c2af0'}
                         transition='all 0.25s ease-in-out'
                         aria-label='Edit book'
                         icon={<Pencil2Icon />}
@@ -330,20 +331,19 @@ export default function Livros() {
         </TabPanels>
       </Tabs>
       <Dialog />
-      <BookModal
-        isOpen={bookModalIsOpen}
-        onClose={bookModalOnClose}
-        onSubmit={isEdit ? handleEditSubmit : handleCreateSubmit}
-        isEdit={isEdit}
-        isLoading={isLoading}
-        control={control}
-        register={register}
-        setValue={setValue}
-      />
+      <Box as={'form'} action={""} onSubmit={isEdit ? handleEditSubmit : handleCreateSubmit}>
+        <BookModal
+          isOpen={bookModalIsOpen}
+          onClose={bookModalOnClose}
+          isEdit={isEdit}
+          isLoading={isLoading}
+          control={control}
+          formProps={formProps}
+        />
+      </Box>
     </Box>
   )
 }
-
 export const getServerSideProps = withSSRAuth(async (ctx) => {
 
   return {

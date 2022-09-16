@@ -1,6 +1,6 @@
-import { CalendarIcon, EmailIcon } from '@chakra-ui/icons';
+import { CalendarIcon, EmailIcon, LockIcon } from '@chakra-ui/icons';
 import {
-    Box, Button, Grid, GridItem,
+    Box, Button, FormControl, FormErrorMessage, Grid, GridItem,
     Input, InputGroup, InputLeftElement, Modal,
     ModalBody, ModalCloseButton, ModalContent, ModalFooter,
     ModalHeader, ModalOverlay, Radio, RadioGroup, Stack, Text
@@ -17,13 +17,11 @@ interface IUserModalProps {
     isEdit: boolean;
     isLoading: boolean;
     onClose: () => void;
-    onSubmit: (data: any) => void;
     control: any;
-    register: any;
-    setValue: any;
+    formProps: any
 }
 
-export const UserModal = ({ isOpen, isEdit, setValue, isLoading, onClose, onSubmit, register, control, ...rest }: IUserModalProps) => {
+export const UserModal = ({ isOpen, isEdit, formProps, isLoading, onClose, control, ...rest }: IUserModalProps) => {
 
     const options = [
         {
@@ -48,6 +46,8 @@ export const UserModal = ({ isOpen, isEdit, setValue, isLoading, onClose, onSubm
         }
     ]
 
+
+    const { register, formState: { errors }, setValue, getValues, setError, clearErrors } = formProps
 
     return (
         <>
@@ -82,6 +82,10 @@ export const UserModal = ({ isOpen, isEdit, setValue, isLoading, onClose, onSubm
                                         />
                                         <Input
                                             {...register("name")}
+                                            required
+                                            minLength={4}
+                                            maxLength={40}
+                                            pattern="[a-zA-Z][a-zA-Z0-9\s]*"
                                             errorBorderColor='red.300'
                                             focusBorderColor='green.200'
                                             variant="outline"
@@ -102,6 +106,7 @@ export const UserModal = ({ isOpen, isEdit, setValue, isLoading, onClose, onSubm
                                             children={<EmailIcon color={'gray.500'} />}
                                         />
                                         <Input
+                                            required
                                             {...register("email")}
                                             errorBorderColor='red.300'
                                             focusBorderColor='green.200'
@@ -114,36 +119,39 @@ export const UserModal = ({ isOpen, isEdit, setValue, isLoading, onClose, onSubm
                                 </GridItem>
                                 <GridItem>
                                     <Text fontSize={'14px'} mb={2}>CPF</Text>
-
-                                    <InputGroup>
-                                        <InputLeftElement
-                                            pointerEvents='none'
-                                            // eslint-disable-next-line react/no-children-prop
-                                            children={<EmailIcon color={'gray.500'} />}
-                                        />
-                                        <Input
-                                            {...register("cpf")}
-                                            errorBorderColor='red.300'
-                                            focusBorderColor='green.200'
-                                            variant="outline"
-                                            type="text"
-                                            placeholder="000.000.000-00"
-                                            borderColor={'gray.300'}
-                                            onChange={(e) => {
-                                                //only numbers
-                                                const value = e.target.value.replace(/\D/g, '')
-                                                    .replace(/(\d{3})(\d)/, '$1.$2')
-                                                    .replace(/(\d{3})(\d)/, '$1.$2')
-                                                    .replace(/(\d{3})(\d)/, '$1-$2')
-                                                    .replace(/(-\d{2})\d+?$/, '$1')
-
-                                                if (isValid(value))
+                                    <FormControl isInvalid={errors.cpf}>
+                                        <InputGroup>
+                                            <Input
+                                                required
+                                                {...register("cpf")}
+                                                errorBorderColor='red.300'
+                                                focusBorderColor='green.200'
+                                                variant="outline"
+                                                type="text"
+                                                placeholder="000.000.000-00"
+                                                borderColor={'gray.300'}
+                                                onChange={(e) => {
+                                                    //only numbers
+                                                    const value = e.target.value.replace(/\D/g, '')
+                                                        .replace(/(\d{3})(\d)/, '$1.$2')
+                                                        .replace(/(\d{3})(\d)/, '$1.$2')
+                                                        .replace(/(\d{3})(\d)/, '$1-$2')
+                                                        .replace(/(-\d{2})\d+?$/, '$1')
 
                                                     setValue("cpf", value)
+                                                    if (!isValid(value))
+                                                        setError("cpf", { type: "focus" })
+                                                    else clearErrors('cpf')
 
-                                            }}
-                                        />
-                                    </InputGroup>
+
+                                                }}
+                                            />
+                                        </InputGroup>
+                                        <FormErrorMessage>
+                                            {errors.cpf && 'CPF inválido'}
+                                        </FormErrorMessage>
+                                    </FormControl>
+
                                 </GridItem>
                                 <GridItem>
                                     <Text fontSize={'14px'} mb={2}>Data de nascimento</Text>
@@ -155,6 +163,7 @@ export const UserModal = ({ isOpen, isEdit, setValue, isLoading, onClose, onSubm
                                             children={<CalendarIcon color={'gray.500'} />}
                                         />
                                         <Input
+                                            required
                                             {...register("birthdate",)}
                                             errorBorderColor='red.300'
                                             focusBorderColor='green.200'
@@ -162,6 +171,7 @@ export const UserModal = ({ isOpen, isEdit, setValue, isLoading, onClose, onSubm
                                             type="date"
                                             placeholder="12/05/2001"
                                             borderColor={'gray.300'}
+                                            max={new Date().toISOString().split("T")[0]}
                                         />
                                     </InputGroup>
                                 </GridItem>
@@ -174,10 +184,15 @@ export const UserModal = ({ isOpen, isEdit, setValue, isLoading, onClose, onSubm
                                         <InputLeftElement
                                             pointerEvents='none'
                                             // eslint-disable-next-line react/no-children-prop
-                                            children={<CalendarIcon color={'gray.500'} />}
+                                            children={<LockIcon color={'gray.500'} />}
                                         />
                                         <Input
-                                            {...register("password",)}
+                                            required
+                                            {...register("password", {
+                                                required: 'Esse campo é obrigatório'
+                                            })}
+                                            min={9}
+                                            max={100}
                                             errorBorderColor='red.300'
                                             focusBorderColor='green.200'
                                             variant="outline"
@@ -185,27 +200,44 @@ export const UserModal = ({ isOpen, isEdit, setValue, isLoading, onClose, onSubm
                                             placeholder="******"
                                             borderColor={'gray.300'}
                                         />
+
                                     </InputGroup>
                                 </GridItem>
 
                                 <GridItem>
                                     <Text fontSize={'14px'} mb={2}>Confirmação da senha</Text>
 
-                                    <InputGroup>
-                                        <InputLeftElement
-                                            pointerEvents='none'
-                                            // eslint-disable-next-line react/no-children-prop
-                                            children={<CalendarIcon color={'gray.500'} />}
-                                        />
-                                        <Input
-                                            errorBorderColor='red.300'
-                                            focusBorderColor='green.200'
-                                            variant="outline"
-                                            type="password"
-                                            placeholder="******"
-                                            borderColor={'gray.300'}
-                                        />
-                                    </InputGroup>
+                                    <FormControl isInvalid={errors.conf_pass}>
+                                        <InputGroup>
+                                            <InputLeftElement
+                                                pointerEvents='none'
+                                                // eslint-disable-next-line react/no-children-prop
+                                                children={<LockIcon color={'gray.500'} />}
+                                            />
+                                            <Input
+                                                required
+                                                {...register("conf_pass", {
+                                                    required: 'Esse campo é obrigatório'
+                                                })}
+                                                errorBorderColor='red.300'
+                                                focusBorderColor='green.200'
+                                                variant="outline"
+                                                type="password"
+                                                placeholder="******"
+                                                minLength={9}
+                                                maxLength={100}
+                                                borderColor={'gray.300'}
+                                                onChange={(e) => {
+                                                    const value = e.target.value
+                                                    if (getValues("password") !== value) setError("conf_pass", { type: 'focus' })
+                                                }}
+                                            />
+
+                                        </InputGroup>
+                                        <FormErrorMessage>
+                                            {errors.conf_pass && 'As senhas são diferentes'}
+                                        </FormErrorMessage>
+                                    </FormControl>
                                 </GridItem>
 
 
@@ -226,7 +258,7 @@ export const UserModal = ({ isOpen, isEdit, setValue, isLoading, onClose, onSubm
                                                     <Radio colorScheme='red' value='MANAGER'>
                                                         Gerente
                                                     </Radio>
-                                                    <Radio colorScheme='green' value='INTERN'>
+                                                    <Radio colorScheme='green' value='INTERN' defaultChecked>
                                                         Interno
                                                     </Radio>
                                                 </Stack>
@@ -275,7 +307,7 @@ export const UserModal = ({ isOpen, isEdit, setValue, isLoading, onClose, onSubm
                             <Button colorScheme='red.300' size={'sm'} mr={3} onClick={onClose}>
                                 Cancelar
                             </Button>
-                            <Button colorScheme={'green'} size={'sm'} onClick={onSubmit} isLoading={isLoading}>Salvar</Button>
+                            <Button colorScheme={'green'} size={'sm'} type={'submit'} isLoading={isLoading}>Salvar</Button>
                         </ModalFooter>
                     </Box>
                 </ModalContent>

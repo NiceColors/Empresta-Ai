@@ -14,6 +14,7 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { ButtonTable } from '../components/atoms/ButtonTable/Index'
 import { TableContainerCustom } from '../components/atoms/Containers/TableContainer';
+import { Can } from '../components/Can';
 import { UserModal } from '../components/molecules/Users/Modal';
 import { useFetch } from '../hooks/useFetch';
 import { api } from '../services/apiClient';
@@ -57,10 +58,10 @@ export default function Usuarios() {
     const { isOpen: userModalIsOpen, onOpen: userModalOnOpen, onClose: userModalOnClose } = useDisclosure()
     const [isEdit, setIsEdit] = useState(false)
 
-
-    const { handleSubmit, reset, register, setValue, control, formState: { errors }, setError } = useForm<FormValues>()
+    const formProps = useForm<FormValues>()
+    const { handleSubmit, reset, control } = formProps
     const [page, setPage] = useState<number | null>(0)
-    const { data: response, isFetching, error } = useFetch('/users?limit=8', {
+    const { data: response } = useFetch('/users?limit=8', {
         params: {
             page
         }
@@ -104,6 +105,8 @@ export default function Usuarios() {
     }
 
     const handleEditSubmit = handleSubmit(async (values) => {
+
+
         try {
             const { data: response } = await api.put(`/users`, {
                 ...values,
@@ -198,8 +201,6 @@ export default function Usuarios() {
 
     useEffect(() => {
 
-        console.log(selectedUser.birthdate)
-
         reset({
             ...selectedUser,
             birthdate: selectedUser.birthdate && new Date(selectedUser.birthdate).toISOString().split('T')[0],
@@ -224,13 +225,14 @@ export default function Usuarios() {
                         <Button colorScheme={'green'} size={'sm'} onClick={() => {
                             setIsEdit(false)
                             userModalOnOpen()
-                            reset({})
+                            reset({
+                                role: 'INTERN'
+                            })
                         }}>+ Criar</Button>
                     </Flex>
                     <Table
                         variant='simple'
                         colorScheme={'blue'}
-                        size={'sm'}
                     >
                         <Thead>
                             <Tr>
@@ -243,7 +245,7 @@ export default function Usuarios() {
                             </Tr>
                         </Thead>
                         <Tbody >
-                            {data?.map((user: IUserProps, index: number) => {
+                            {data?.map((user: IUserProps) => {
                                 return (
                                     <Tr key={user.id} >
                                         <Td>{user.name.split(' ').slice(0, 2).join(' ')}</Td>
@@ -254,29 +256,31 @@ export default function Usuarios() {
                                         <Td isNumeric>
                                             <Flex gap={2} justifyContent={'flex-end'}>
 
-                                                <IconButton
-                                                    variant='outline'
-                                                    colorScheme='yellow'
-                                                    aria-label='Edit user'
-                                                    icon={<Pencil2Icon />}
-                                                    onClick={() => {
-                                                        setSelectedUser(user)
-                                                        userModalOnOpen()
-                                                        setIsEdit(true)
-                                                    }}
-                                                    isLoading={isLoading && user.id === selectedUser.id}
-                                                />
-                                                <IconButton
-                                                    variant='outline'
-                                                    colorScheme='red'
-                                                    aria-label='Delete user'
-                                                    icon={<TrashIcon />}
-                                                    onClick={() => {
-                                                        setSelectedUser(user)
-                                                        onOpen()
-                                                    }}
-                                                    isLoading={isLoading && user.id === selectedUser.id}
-                                                />
+                                                <Can isPage={false} permissions={['users']} role="MANAGER">
+                                                    <IconButton
+                                                        variant='outline'
+                                                        colorScheme='yellow'
+                                                        aria-label='Edit user'
+                                                        icon={<Pencil2Icon />}
+                                                        onClick={() => {
+                                                            setSelectedUser(user)
+                                                            userModalOnOpen()
+                                                            setIsEdit(true)
+                                                        }}
+                                                        isLoading={isLoading && user.id === selectedUser.id}
+                                                    />
+                                                    <IconButton
+                                                        variant='outline'
+                                                        colorScheme='red'
+                                                        aria-label='Delete user'
+                                                        icon={<TrashIcon />}
+                                                        onClick={() => {
+                                                            setSelectedUser(user)
+                                                            onOpen()
+                                                        }}
+                                                        isLoading={isLoading && user.id === selectedUser.id}
+                                                    />
+                                                </Can>
                                             </Flex>
                                         </Td>
                                     </Tr>
@@ -301,23 +305,26 @@ export default function Usuarios() {
 
                 </HStack>
                 <Dialog />
-                <UserModal
-                    isOpen={userModalIsOpen}
-                    onClose={userModalOnClose}
+                <Box
+                    as={'form'}
                     onSubmit={isEdit ? handleEditSubmit : handleCreateSubmit}
-                    isEdit={isEdit}
-                    isLoading={isLoading}
-                    control={control}
-                    register={register}
-                    setValue={setValue}
-                />
+                >
+                    <UserModal
+                        isOpen={userModalIsOpen}
+                        onClose={userModalOnClose}
+                        isEdit={isEdit}
+                        isLoading={isLoading}
+                        control={control}
+                        formProps={formProps}
+                    />
+                </Box>
             </Grid>
 
         </>
     )
 }
 
-export const getServerSideProps = withSSRAuth(async (ctx) => {
+export const getServerSideProps = withSSRAuth(async () => {
     return {
         props: {
 

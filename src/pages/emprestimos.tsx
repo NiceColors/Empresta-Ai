@@ -1,10 +1,11 @@
 import { AlertDialog, AlertDialogBody, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, Badge, Button, Flex, Grid, Heading, IconButton, Table, Tbody, Td, Th, Thead, Tr, useDisclosure, useToast } from '@chakra-ui/react'
 import { Pencil2Icon, TrashIcon } from '@radix-ui/react-icons'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { TableContainerCustom } from '../components/atoms/Containers/TableContainer'
 import { Can } from '../components/Can'
 import { LoanModal } from '../components/molecules/Loans/Modal'
+import { AuthContext } from '../contexts/AuthContext'
 import { useFetch } from '../hooks/useFetch'
 import { api } from '../services/apiClient'
 import { withSSRAuth } from '../utils/withSSRAuth'
@@ -32,6 +33,9 @@ type FormValues = {
 
 
 export default function Emprestimos() {
+
+  const { user } = useContext(AuthContext)
+
 
   const [isLoading, setIsLoading] = useState(false)
   const [selectedLoan, setSelectedLoan] = useState<ILoanProps>({} as ILoanProps)
@@ -203,7 +207,7 @@ export default function Emprestimos() {
 
 
   return (
-    <Can permissions={[]} role={'MANAGER'}>
+    <Can isPage={true} permissions={['LOANS']} role={'MANAGER'}>
       <Grid overflowY={'hidden'}>
         <TableContainerCustom>
           <Flex justifyContent={'space-between'} align={'center'}>

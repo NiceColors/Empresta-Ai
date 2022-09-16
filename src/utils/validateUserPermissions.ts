@@ -12,6 +12,9 @@ export function ValidateUserPermissions({
     role
 }: ValidateUserPermissionsParams) {
 
+
+    if (user?.permissions?.includes("*")) return true
+
     if (permissions && permissions?.length > 0) {
 
 
