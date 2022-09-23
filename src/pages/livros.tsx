@@ -42,16 +42,22 @@ export default function Livros() {
   });
 
   const { data } = response
-
-  const [selectedBook, setSelectedBook] = useState<IBookDetailsProps>(data[0] ?? details)
+  const [selectedBook, setSelectedBook] = useState<IBookDetailsProps>(data[0])
   const { limit, total } = response
   const totalPages = Math.ceil(total / limit)
   const toast = useToast()
 
+  useEffect(() => {
+    if (data)
+      setSelectedBook(data[0])
+
+  }, [data])
+
+
   const onDelete = async () => {
     setIsLoading(true)
     try {
-      const { data } = await api.delete(`/books`, {
+      const { data } = await api.delete(`/books/${selectedBook.id}`, {
         data: {
           id: selectedBook.id
         }
@@ -81,7 +87,7 @@ export default function Livros() {
 
   const handleEditSubmit = handleSubmit(async (values) => {
     try {
-      const { data: response } = await api.put(`/books`, {
+      const { data: response } = await api.put(`/books/${selectedBook.id}`, {
         ...values,
       })
       const editMessage = response?.message ?? 'O Livro selecionado foi editado com sucesso.'
@@ -133,7 +139,6 @@ export default function Livros() {
     }
   })
 
-
   const screen = useBreakpointValue({
     base: false,
     lg: true,
@@ -181,7 +186,7 @@ export default function Livros() {
 
     reset({
       ...selectedBook,
-      releaseYear: new Date(selectedBook.releaseYear).toLocaleDateString('en-ca')
+      releaseYear: new Date(selectedBook?.releaseYear)?.toLocaleDateString('en-ca')
     })
 
   }, [selectedBook])
@@ -190,7 +195,7 @@ export default function Livros() {
 
     if (router.query.reload === 'true') {
       setPage(page === 0 ? null : 0)
-      setSelectedBook((prevState) => ({ ...prevState, status: !prevState.status }))
+      setSelectedBook((prevState) => ({ ...prevState, status: !prevState?.status }))
     }
 
 
@@ -265,7 +270,6 @@ export default function Livros() {
                         filter: 'brightness(1)',
                       }}
                       transition='all 0.3s ease-in-out'
-
                     />
                     <Flex gap={2} justifyContent={'flex-end'} px={2} py={3}>
                       {book.status &&
@@ -292,10 +296,10 @@ export default function Livros() {
                         colorScheme='green'
                         _hover={{
                           boxShadow: 'md',
-                          backgroundColor: '#7a7226ee',
+                          backgroundColor: '#d1ad0e',
                           color: '#fff'
                         }}
-                        color={book.status ? '#7a7226ee' : '#c51c2af0'}
+                        color={book.status ? '#d1ad0e' : '#c51c2af0'}
                         transition='all 0.25s ease-in-out'
                         aria-label='Edit book'
                         icon={<Pencil2Icon />}

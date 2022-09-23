@@ -40,7 +40,3 @@ export const isValid = (cpf: string): boolean => {
 
     return isValid;
 };
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes

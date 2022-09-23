@@ -34,7 +34,7 @@ export const BookModal = ({ isOpen, isEdit, formProps, isLoading, onClose, contr
             <Modal isOpen={isOpen} onClose={onClose} size={'2xl'}
             >
                 <ModalOverlay />
-                <ModalContent bgColor={'gray.800'} borderRadius={19}>
+                <ModalContent bgColor={'#161618'} borderRadius={19}>
                     <ModalHeader>
                         {isEdit ? 'Edição' : 'Criação'} de livro
                         <Text fontSize={'14px'} fontWeight={300}>

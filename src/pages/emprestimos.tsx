@@ -1,5 +1,5 @@
 import { AlertDialog, AlertDialogBody, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, Badge, Button, Flex, Grid, Heading, IconButton, Table, Tbody, Td, Th, Thead, Tr, useDisclosure, useToast } from '@chakra-ui/react'
-import { Pencil2Icon, TrashIcon } from '@radix-ui/react-icons'
+import { LockOpen2Icon, Pencil2Icon, TrashIcon } from '@radix-ui/react-icons'
 import React, { useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { TableContainerCustom } from '../components/atoms/Containers/TableContainer'
@@ -41,6 +41,7 @@ export default function Emprestimos() {
   const [selectedLoan, setSelectedLoan] = useState<ILoanProps>({} as ILoanProps)
 
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isOpen: loanGiveBackIsOpen, onOpen: loanGiveBackOnOpen, onClose: loanGiveBackOnClose } = useDisclosure()
   const { isOpen: loanModalIsOpen, onOpen: loanModalOnOpen, onClose: loanModalOnClose } = useDisclosure()
   const [isEdit, setIsEdit] = useState(false)
 
@@ -61,7 +62,7 @@ export default function Emprestimos() {
   const onDelete = async () => {
     setIsLoading(true)
     try {
-      const { data } = await api.delete(`/loans`, {
+      const { data } = await api.delete(`/loans/${selectedLoan.id}`, {
         data: {
           id: selectedLoan.id
         }
@@ -76,7 +77,37 @@ export default function Emprestimos() {
       })
     } catch (err: any) {
       console.log(err)
-      const errorMessage = err.response?.data?.message ?? 'Erro ao deletar o usuário'
+      const errorMessage = err.response?.data?.message ?? 'Erro ao deletar o empréstimo'
+      toast({
+        title: `${errorMessage}`,
+        status: 'error',
+        isClosable: true,
+        position: 'top'
+      })
+    } finally {
+      setIsLoading(false)
+      setPage(page === 0 ? null : 0)
+    }
+  }
+
+  const onGiveBack = async () => {
+    setIsLoading(true)
+    try {
+      const { data } = await api.put(`/loans/${selectedLoan.id}`, {
+        id: selectedLoan.id,
+        status: false
+      })
+      const updateLoan = data?.message ?? 'O empréstimo selecionado foi finalizado com sucesso.'
+      toast({
+        title: `Livro devolvido com sucesso`,
+        description: updateLoan,
+        status: 'success',
+        isClosable: true,
+        duration: 5000,
+      })
+    } catch (err: any) {
+      console.log(err)
+      const errorMessage = err.response?.data?.message ?? 'Erro ao devolver livro'
       toast({
         title: `${errorMessage}`,
         status: 'error',
@@ -91,7 +122,7 @@ export default function Emprestimos() {
 
   const handleEditSubmit = handleSubmit(async (values: any) => {
     try {
-      const { data: response } = await api.put(`/loans`, {
+      const { data: response } = await api.put(`/loans/${selectedLoan.id}`, {
         ...values,
         startDate: new Date(values.startDate),
         endDate: new Date(values.endDate),
@@ -121,7 +152,6 @@ export default function Emprestimos() {
   })
 
   const handleCreateSubmit = handleSubmit(async (values: any) => {
-
     try {
       const { data: response } = await api.post(`/loans`, {
         ...values,
@@ -189,6 +219,41 @@ export default function Emprestimos() {
   }
 
 
+  const DialogGiveBack = () => {
+    return (
+      <AlertDialog
+        isOpen={loanGiveBackIsOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={loanGiveBackOnClose}
+        isCentered
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize='lg' fontWeight='bold' color={'green.500'}>
+              Registrar devolução
+            </AlertDialogHeader>
+
+            <AlertDialogBody color={'green.400'}>
+              Tem certeza de que deseja registrar a devolução para este livro?
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button color={'gray.900'} size={'sm'} ref={cancelRef} onClick={loanGiveBackOnClose}>
+                Cancelar
+              </Button>
+              <Button size={'sm'} colorScheme='green' onClick={() => {
+                onGiveBack()
+                loanGiveBackOnClose()
+              }} ml={3} >
+                Devolver
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+    )
+  }
+
   useEffect(() => {
 
     reset({
@@ -247,6 +312,21 @@ export default function Emprestimos() {
 
                     <Td isNumeric>
                       <Flex gap={2} justifyContent={'flex-end'}>
+
+                        {loan.status && (
+                          <IconButton
+                            variant='outline'
+                            colorScheme='green'
+                            aria-label='Delete loan'
+                            icon={<LockOpen2Icon />}
+                            onClick={() => {
+                              setSelectedLoan(loan)
+                              loanGiveBackOnOpen()
+                            }}
+                            isLoading={isLoading && loan.id === selectedLoan.id}
+                          />
+                        )}
+
                         <IconButton
                           variant='outline'
                           colorScheme='yellow'
@@ -259,6 +339,7 @@ export default function Emprestimos() {
                           }}
                           isLoading={isLoading && loan.id === selectedLoan.id}
                         />
+
                         <IconButton
                           variant='outline'
                           colorScheme='red'
@@ -270,6 +351,7 @@ export default function Emprestimos() {
                           }}
                           isLoading={isLoading && loan.id === selectedLoan.id}
                         />
+
                       </Flex>
                     </Td>
                   </Tr>
@@ -291,6 +373,7 @@ export default function Emprestimos() {
         setValue={setValue}
       />
       <Dialog />
+      <DialogGiveBack />
     </Can>
   )
 }

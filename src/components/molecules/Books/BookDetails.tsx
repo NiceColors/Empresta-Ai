@@ -17,7 +17,7 @@ export const BookDetails: FC<IBookDetailsProps> = (details) => {
 
     return (
         <Box
-            bgColor={'gray.900'}
+            bgColor={'#161618'}
             w={'100%'}
             borderRadius={14}
             px={6}

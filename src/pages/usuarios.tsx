@@ -76,7 +76,7 @@ export default function Usuarios() {
     const onDelete = async () => {
         setIsLoading(true)
         try {
-            const { data } = await api.delete(`/users`, {
+            const { data } = await api.delete(`/users/${selectedUser.id}`, {
                 data: {
                     id: selectedUser.id
                 }
@@ -108,7 +108,7 @@ export default function Usuarios() {
 
 
         try {
-            const { data: response } = await api.put(`/users`, {
+            const { data: response } = await api.put(`/users/${selectedUser.id}`, {
                 ...values,
                 permissions: values.permissions.map(item => item.value)
             })
@@ -256,7 +256,7 @@ export default function Usuarios() {
                                         <Td isNumeric>
                                             <Flex gap={2} justifyContent={'flex-end'}>
 
-                                                <Can isPage={false} permissions={['users']} role="MANAGER">
+                                                <Can isPage={false} permissions={['USER']} role="MANAGER">
                                                     <IconButton
                                                         variant='outline'
                                                         colorScheme='yellow'

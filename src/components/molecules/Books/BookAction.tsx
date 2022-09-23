@@ -24,11 +24,11 @@ export const BookAction: FC<IProps> = ({ src, status, hash }) => {
     const handleLoanSubmit = async (values: any) => {
         setLoading(true)
         try {
-            const { data: response } = await api.put(`/loans`, {
-                loanId: hash,
-                status: true,
+            const { data } = await api.put(`/loans/${hash}`, {
+                id: hash,
+                status: false
             })
-            const createMessage = response?.message ?? 'Livro devolvido'
+            const createMessage = data?.message ?? 'Livro devolvido'
             toast({
                 title: `Livro devolvido`,
                 description: createMessage,
@@ -71,8 +71,8 @@ export const BookAction: FC<IProps> = ({ src, status, hash }) => {
                         {screen ? "Realizar empréstimo" : 'Emprestar'}
                     </Button>
                     :
-                    <Button onClick={handleLoanSubmit} colorScheme={'green'} 
-                    size={['sm', 'sm', 'sm', 'md']} w={'100%'}>{screen ? "Registrar devolução" : "Devolver"}</Button>
+                    <Button onClick={handleLoanSubmit} colorScheme={'green'}
+                        size={['sm', 'sm', 'sm', 'md']} w={'100%'}>{screen ? "Registrar devolução" : "Devolver"}</Button>
                 }
             </Box>
         </BookContainer>

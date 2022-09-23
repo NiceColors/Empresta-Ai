@@ -13,27 +13,35 @@ import { withSSRAuth } from '../utils/withSSRAuth';
 export default function Dashboard() {
     const skeletonArray = [... new Array(12)].map((item, index) => ({ title: 'Lorem Ipsum', author: 'Paçoca', pages: 0, isbn: index }))
     const [data, setData] = useState<any>(skeletonArray)
-    const isLoading = !(data[0].isbn)
+    const isLoading = !(data[0]?.isbn)
 
     const { user } = useContext(AuthContext)
     const [clients, setClients] = useState<any>([])
     const [loans, setLoans] = useState<any>([])
-
+    const [total, setTotal] = useState({
+        books: 0,
+        clients: 0,
+        loans: 0
+    })
 
     useEffect(() => {
         try {
             (async () => {
                 const { data: response } = await api.get(`/books`);
-                setData(response)
+                setData(response.data)
+                setTotal((prev) => ({ ...prev, books: response.total }))
             })();
 
             (async () => {
                 const { data: response } = await api.get(`/clients`);
-                setClients(response)
+                setClients(response.data)
+                setTotal((prev) => ({ ...prev, clients: response.total }))
+
             })();
             (async () => {
                 const { data: response } = await api.get(`/loans`);
-                setLoans(response)
+                setLoans(response.data)
+                setTotal((prev) => ({ ...prev, loans: response.total }))
             })();
 
 
@@ -45,6 +53,9 @@ export default function Dashboard() {
     const uniqueISBNs = [... new Set(data?.map((book: any) => book.isbn))]
     const listOfBooks = !isLoading ? uniqueISBNs.map(item => data.find((book: any) => book.isbn === item)) : skeletonArray
     const booksCount = (isbn: string) => data.filter((book: any) => book.isbn === isbn).length
+
+
+    console.log(loans)
 
     return (
         <>
@@ -67,7 +78,7 @@ export default function Dashboard() {
                 >
                     <Box mt='8' bg='gray.800' p='8' borderRadius={8}>
                         <Heading size='lg' fontWeight='normal'>Total de Livros</Heading>
-                        <Text fontSize={'4rem'}>{data.length}</Text>
+                        <Text fontSize={'4rem'}>{total.books}</Text>
                     </Box>
                 </GridItem>
                 <GridItem
@@ -100,7 +111,7 @@ export default function Dashboard() {
                         maxH={'40vh'}
                         overflowY={'auto'}
                     >
-                        {loans.data.map((item: any, index: number) =>
+                        {loans?.map((item: any, index: number) =>
                             <Flex key={index} align="center" justifyContent={'space-between'}>
                                 <Flex gap={4}>
                                     <Avatar />
