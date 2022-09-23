@@ -12,28 +12,28 @@ import { withSSRAuth } from '../utils/withSSRAuth';
 
 export default function Dashboard() {
     const skeletonArray = [... new Array(12)].map((item, index) => ({ title: 'Lorem Ipsum', author: 'Paçoca', pages: 0, isbn: index }))
-    const [data, setData] = useState(skeletonArray)
+    const [data, setData] = useState<any>(skeletonArray)
     const isLoading = !(data[0].isbn)
 
     const { user } = useContext(AuthContext)
-    const [clients, setClients] = useState<IClientProps[]>([])
-    const [loans, setLoans] = useState<ILoanProps[]>([])
+    const [clients, setClients] = useState<any>([])
+    const [loans, setLoans] = useState<any>([])
 
 
     useEffect(() => {
         try {
             (async () => {
-                const response = await api.get(`/books`);
-                setData(response.data.data)
+                const { data: response } = await api.get(`/books`);
+                setData(response)
             })();
 
             (async () => {
-                const response = await api.get(`/clients`);
-                setClients(response.data.data)
+                const { data: response } = await api.get(`/clients`);
+                setClients(response)
             })();
             (async () => {
-                const response = await api.get(`/loans`);
-                setLoans(response.data.data)
+                const { data: response } = await api.get(`/loans`);
+                setLoans(response)
             })();
 
 
@@ -100,7 +100,7 @@ export default function Dashboard() {
                         maxH={'40vh'}
                         overflowY={'auto'}
                     >
-                        {loans.map((item, index) =>
+                        {loans.data.map((item: any, index: number) =>
                             <Flex key={index} align="center" justifyContent={'space-between'}>
                                 <Flex gap={4}>
                                     <Avatar />

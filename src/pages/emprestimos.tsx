@@ -122,8 +122,6 @@ export default function Emprestimos() {
 
   const handleCreateSubmit = handleSubmit(async (values: any) => {
 
-    console.log(values)
-
     try {
       const { data: response } = await api.post(`/loans`, {
         ...values,
@@ -192,8 +190,6 @@ export default function Emprestimos() {
 
 
   useEffect(() => {
-
-    console.log(selectedLoan)
 
     reset({
       employeeId: { value: selectedLoan.employeeId, label: selectedLoan.employeeName },

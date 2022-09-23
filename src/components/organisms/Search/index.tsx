@@ -62,7 +62,7 @@ export default function Search() {
                         _hover={{ borderColor: 'blue.500' }}
                         borderColor={'gray.700'}
                         color="green.400"
-                        placeholder='Buscar na plataforma por...'
+                        placeholder='Buscar...'
                         onChange={(e) => setSearch(e.target.value)}
                         onFocus={() => setIsOpen(true)}
                     />
@@ -110,7 +110,7 @@ export default function Search() {
                                 fontWeight={500}
                                 color={'whiteAlpha.900'}
 
-                            >{title} - {pages}</Text>
+                            >{title} - {pages} páginas</Text>
                         </Box>
                     ) : (
                         <Stack gap={2}>
